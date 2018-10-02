@@ -1,5 +1,5 @@
 # image-streamer-linux
-Sample Linux multi-distro artifact bundle for use with HPE Image Streamer V4.1+
+Sample didactic multi-distro Linux artifact bundle for use with HPE Image Streamer V4.1+
 
 This project is a merged fork of the [image-streamer-rhel](https://github.com/HewlettPackard/image-streamer-rhel) and the [image-streamer-sles](https://github.com/HewlettPackard/image-streamer-sles) repositories.
 
