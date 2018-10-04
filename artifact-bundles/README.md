@@ -1,4 +1,4 @@
-# Didactic-Linux-MultiDistro-Artifact-Bundle-V0.1-FDZ
+# Didactic-Linux-MultiDistro-Artifact-Bundle-V0.2-FDZ
 
 ## Description
 
@@ -17,7 +17,7 @@ Simple didactic multi-distro Linux artifact bundle for use with HPE Image Stream
 
 Didactic-Linux-MultiDistro-Artifact-Bundle-V0.2-FDZ
 
-* Automatic copy of the grubx64.efi bootloader in the /EFI/BOOT UEFI directory (Mount-and-Validate-General-FDZ Plan Script).
+* Automatic copy of the grubx64.efi bootloader in the /EFI/BOOT UEFI directory (Mount-and-Validate-General-FDZ Plan Script) when OS is CentOS.
 
 Didactic-Linux-MultiDistro-Artifact-Bundle-V0.1-FDZ
 

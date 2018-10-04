@@ -1,4 +1,4 @@
-# Didactic-Linux-MultiDistro-Artifact-Bundle-V0.1-FDZ
+# Didactic-Linux-MultiDistro-Artifact-Bundle-V0.2-FDZ
 
 ## Description
 
