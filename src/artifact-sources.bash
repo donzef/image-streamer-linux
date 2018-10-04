@@ -56,7 +56,7 @@ for f in $PS_LIST ; do
     PS_NAME=$($JQ  -r '.name' $f)
     PS_ID=$($JQ  -r '.id' $f)
     PS_CONTENT=$($JQ  '.content' 51ab6ad0-dc26-46d2-bb15-a054b19c3ec6_planscript.json)
-    echo -e $PS_CONTENT | sed '1s/^"// ; $s/"$//' > $PS_NAME
+    echo -e $PS_CONTENT | sed '1s/^"// ; $s/"$// ; 1,$s/\\"/"/g' > $PS_NAME
 done
 
 # Cleanup 
