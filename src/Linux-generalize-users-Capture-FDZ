@@ -1,7 +1,7 @@
-# ############################################
-# Linux-generalize-network-Capture-FDZ
+# ##########################################
+# Linux-generalize-users-Capture-FDZ
 # Version: 0.5
-#############################################
+###########################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,84 +13,85 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-#The output of the following guestfish echo commands goes
-# into the Golden Image Activity log file.
-echo "======================================="
-echo "Linux-generalize-network-Capture-FDZ"
-echo "======================================="
+#This script removes the users created by a previous deployment
 
-# Create a temporary directory in the Image Streamer
-!mkdir new_network
-
-
-# The output of the following guestfish command goes
+# The output of the following echo commands goes
 # in the Golden Image Activity log file.
-echo " Copy out the network directory"
+echo "======================================="
+echo "Linux-generalize-users-Capture-FDZ"
+echo "======================================="
+echo "Copy out user passwd and group files"
 
-# Depending on the OS-Type, push-out the entire network directory
-# to the just created new_network directory in the Image Streamer.
-<!awk '/sles/ {print "copy-out /etc/sysconfig/network/ new_network/"} ; /rhel/ || /centos/ || /xen/ {print "copy-out /etc/sysconfig/network-scripts new_network/"}' ./OS-Type
+# The following 5 commands copy files and dirs from
+# the Golden Image out to the Image Streamer 
+# for further processing.
+download /etc/passwd ./passwd
+download /etc/group ./group
+download /etc/shadow ./shadow
+copy-out /home .
+copy-out /var/mail/ .
 
-# Create a bash script in the Golden Image that will be 
-# pushed-out to the Image Streamer before execution.
-upload -<<END /temp/ImageStreamer/gen_network_conf 
+# Now that we have a copy of /home and /var/mail
+# in the Image Streamer, we can remove them
+# from the Golden Image. We will'll upload them
+# back when cleaned-up.
+rm-rf /home
+rm-rf /var/mail
+
+
+# The following command writes a bash shell script into the Golden
+# Image, in the /temp directory.
+upload -<<END /temp/cleanup-homedirs-and-maildirs
 #!/bin/bash
 
-OS_Type=$(cat OS-Type)
-case $OS_Type in
- rhel|centos|xen*)
- NET_DIR="network-scripts"
- ;;
- sles)
- NET_DIR="network"
- ;;
- *)
- echo "OS Type $OS_Type not supported. Exiting. " 
- exit 1 
- ;;
-esac
- 
-net_cfg_files=`ls new_network/$NET_DIR/ | grep "ifcfg-"`
+# Retrieve the list of users to cleanup:
+users=$(awk -F ':' '/^#START/ {i=1; next;}; i && i++ <= i && ! /^#END/ {print $1}' ./passwd)
 
-for net_cfg_file in $net_cfg_files
-do
-	if [ $net_cfg_file != "ifcfg-lo" ]
-	then
-		rm -rf new_network/$NET_DIR/$net_cfg_file 
-		echo -e "\tNetwork interface cfg file $net_cfg_file successfully removed!!!" 
-	fi
+# The output of the the following command goes into
+# the Golden Image Activity log file.
+echo "Removing /home dirs and /var/mail files of the users to be cleaned-up" 
+for user in $users; do
+ rm -rf /home/$user
+ rm -rf /var/mail/$user
 done
+
+#unlink $0
 exit 0
 END
 
-# Push-out the above script before execution in the Image Streamer
-download /temp/ImageStreamer/gen_network_conf ./gen_network_conf
-!source ./gen_network_conf
+# The above shell script is copied-out to the Image Streamer before execution.
+download /temp/cleanup-homedirs-and-maildirs ./cleanup-homedirs-and-maildirs
+!source ./cleanup-homedirs-and-maildirs
 
-# The output of the following guestfish echo command goes
-# in the Golden Image Activity log file.
-echo " Removal of the Golden Image network directory"
+# The following command writes a bash shell script into
+# the temporary directory in the Golden Image, for further execution.
+upload -<<END /temp/ImageStreamer/generalize_users
+#! /bin/bash
 
-# Remove the Golden Image network directory 
-# depending on the OS-Type.
-<!awk '/sles/ {print "rm-rf /etc/sysconfig/network"} ; /rhel/ || /centos/ || /xen/ {print "rm-rf /etc/sysconfig/network-scripts"}' ./OS-Type
+# Retrieve the list of users to generalize:
+users=$(awk -F ':' '/^#START/ {i=1; next;}; i && i++ <= i && ! /^#END/ {print $1}' ./passwd)
 
-# Pull-in the cleaned network directory into the Golden Image
-# at the right location depending on the OS-Type.
-echo " Pull-in the cleaned network directory into the Golden Image" 
-<!awk '/sles/ {print "copy-in new_network/network/ /etc/sysconfig/ "} ; /rhel/ || /centos/ || /xen/ {print "copy-in new_network/network-scripts/ /etc/sysconfig"}' ./OS-Type
+for user in $users
+do
+echo "Removing $user from shadow file"	
+sed -i "/$user/d" ./shadow
+done
+echo -e "\tRemoving users added by ImageStreamer in passwd and group files"
+sed -i '/^#START/,/^#END/{/^#START/d;d;}' ./passwd
+sed -i '/^#START/,/^#END/{/^#START/d;d;}' ./group
 
-
-# Various clean up in the Golden Image.
-# The output of the guestfish echo commands goes
-# in the Golden Image Activity log file.
-echo " Remove /etc/init.d/ibftT if exists"
--rm-rf /etc/init.d/ibftT
-
-echo " Remove SSH host keys"
--glob rm-rf /etc/ssh/ssh_host_*
-
-
-echo -e " Clear the resolv.conf file"
-upload -<<END /etc/resolv.conf
+unlink $0
+exit 0
 END
+
+# Copy out the above script from the Golden Image to the Image Streamer 
+# before execution by the Image Streamer shell.
+download /temp/ImageStreamer/generalize_users ./generalize_users
+!source ./generalize_users
+
+# Copy-in password, group files, /var/mails and /home directories
+upload ./passwd /etc/passwd
+upload ./group /etc/group
+upload ./shadow /etc/shadow
+copy-in ./home /
+copy-in ./mail /var/

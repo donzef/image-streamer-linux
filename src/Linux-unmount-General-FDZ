@@ -1,7 +1,7 @@
-# ############################################
-# Linux-generalize-network-Capture-FDZ
-# Version: 0.5
-#############################################
+#################################################
+# Linux-unmount-General-FDZ
+# Version: 0.4
+#################################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,84 +13,57 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-#The output of the following guestfish echo commands goes
-# into the Golden Image Activity log file.
+# The following 4 echo commands are executed by the guestfish shell.
+# Their output goes in the OS-Volume Activity log file.
 echo "======================================="
-echo "Linux-generalize-network-Capture-FDZ"
+echo "Linux-unmount-General-FDZ"
 echo "======================================="
+echo "Program the restore of the original RC file as last line of the ImageStreamer modified RC file"
 
-# Create a temporary directory in the Image Streamer
-!mkdir new_network
-
-
-# The output of the following guestfish command goes
-# in the Golden Image Activity log file.
-echo " Copy out the network directory"
-
-# Depending on the OS-Type, push-out the entire network directory
-# to the just created new_network directory in the Image Streamer.
-<!awk '/sles/ {print "copy-out /etc/sysconfig/network/ new_network/"} ; /rhel/ || /centos/ || /xen/ {print "copy-out /etc/sysconfig/network-scripts new_network/"}' ./OS-Type
-
-# Create a bash script in the Golden Image that will be 
-# pushed-out to the Image Streamer before execution.
-upload -<<END /temp/ImageStreamer/gen_network_conf 
-#!/bin/bash
-
-OS_Type=$(cat OS-Type)
-case $OS_Type in
- rhel|centos|xen*)
- NET_DIR="network-scripts"
- ;;
- sles)
- NET_DIR="network"
- ;;
- *)
- echo "OS Type $OS_Type not supported. Exiting. " 
- exit 1 
- ;;
-esac
- 
-net_cfg_files=`ls new_network/$NET_DIR/ | grep "ifcfg-"`
-
-for net_cfg_file in $net_cfg_files
-do
-	if [ $net_cfg_file != "ifcfg-lo" ]
-	then
-		rm -rf new_network/$NET_DIR/$net_cfg_file 
-		echo -e "\tNetwork interface cfg file $net_cfg_file successfully removed!!!" 
-	fi
-done
-exit 0
-END
-
-# Push-out the above script before execution in the Image Streamer
-download /temp/ImageStreamer/gen_network_conf ./gen_network_conf
-!source ./gen_network_conf
-
-# The output of the following guestfish echo command goes
-# in the Golden Image Activity log file.
-echo " Removal of the Golden Image network directory"
-
-# Remove the Golden Image network directory 
-# depending on the OS-Type.
-<!awk '/sles/ {print "rm-rf /etc/sysconfig/network"} ; /rhel/ || /centos/ || /xen/ {print "rm-rf /etc/sysconfig/network-scripts"}' ./OS-Type
-
-# Pull-in the cleaned network directory into the Golden Image
-# at the right location depending on the OS-Type.
-echo " Pull-in the cleaned network directory into the Golden Image" 
-<!awk '/sles/ {print "copy-in new_network/network/ /etc/sysconfig/ "} ; /rhel/ || /centos/ || /xen/ {print "copy-in new_network/network-scripts/ /etc/sysconfig"}' ./OS-Type
+# The following echo command is executed by the Image Streamer shell.
+# Its output is appended to the RC file already present in the Image Streamer.
+# Its goal is to tell RC-FILE to restore its backup file when executed during the
+# first reboot of the OS-Volume.
+#!echo "mv -f /etc/rc.d/rc.local.backup /etc/rc.d/rc.local" >> ./RC-FILE
+<!awk '/rhel/ || /centos/ {print "!echo mv -f /etc/rc.d/rc.local.backup /etc/rc.d/rc.local >>./RC-FILE"} ; /sles/ {print "!echo mv -f /etc/init.d/after.local.backup /etc/init.d/after.local >> ./RC-FILE"}' ./OS-Type
 
 
-# Various clean up in the Golden Image.
-# The output of the guestfish echo commands goes
-# in the Golden Image Activity log file.
-echo " Remove /etc/init.d/ibftT if exists"
--rm-rf /etc/init.d/ibftT
+# The following echo command is executed by the guestfish shell
+# Its output goes in the OS-Volume Activity log.
 
-echo " Remove SSH host keys"
--glob rm-rf /etc/ssh/ssh_host_*
+echo "Copy-in the modified RC file"
+# The following command copies the modified rc.local file from 
+# the Image Streamer into the OS-Volume.
+#upload ./rc.local /etc/rc.d/rc.local
+<!awk '/rhel/ || /centos/ {print "upload ./RC-FILE /etc/rc.d/rc.local"} ; /sles/ {print "upload ./RC-FILE /etc/init.d/after.local" }' ./OS-Type
 
 
-echo -e " Clear the resolv.conf file"
-upload -<<END /etc/resolv.conf
-END
+echo "Add the execute protection to the modified RC file"
+<!awk '/rhel/ || /centos/ {print "chmod 0755 /etc/rc.d/rc.local"} ; /sles/ {print "chmod 0755 /etc/init.d/after.local" }' ./OS-Type
+
+# The following echo commands is executed by the guestfish shell
+# Its output goes into the OS-Volume Activity log.
+echo "Copy in the saved backup of original RC filel"
+
+# The following command copies rc.local.backup file from the Image Streamer 
+# into the OS-Volume.
+#upload ./rc.local.backup /etc/rc.d/rc.local.backup
+<!awk '/rhel/ || /centos/ {print "upload ./RC-FILE.backup /etc/rc.d/rc.local.backup"} ; /sles/ {print "upload ./RC-FILE.backup /etc/init.d/after.local.backup" }' ./OS-Type
+
+
+# The following 5 commands are executed by the guestfish shell.
+# Their output goes in the OS-Volume Activity log file.
+echo "#### This is the content of the rc.local file that will be executed during next reboot:"
+echo "cat RC file"
+!cat ./RC-FILE
+echo "#### End of the RC file that will be executed during the next reboot"
+echo "Removal of the temporary directory created in the OS-Volume"
+
+# Uncomment the following line if you want guestfish to remove the entire
+# temporary directory created in the OS-Volume.
+# rm-rf /temp/ImageStreamer
+
+# The following commands are executed by the guestfish shell. 
+# Their output goes in the OS-Volume Activity log file.
+echo "unmount all guestfish mounted partition(s)"
+unmount-all
