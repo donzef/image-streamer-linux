@@ -7,7 +7,7 @@
 # Typical invocation:
 #     ./artifact-sources.bash ../artifacts-bundles/Didactic-Linux-MultiDistro-Artifact-Bundle-V0.2-FDZ.zip
 
-# Version: 0.2
+# Version: 0.3
 
 # Check argument(s)
 NUM_ARG=1
@@ -17,7 +17,7 @@ if [ "$#" != "$NUM_ARG" ] ; then
    exit 1
 fi
 
-# Variable initialization
+# Variables initialization
 JQ=$(which jq 2> /dev/null)
 UNZIP=$(which jq 2> /dev/null)
 ARTIFACT=$1
