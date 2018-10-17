@@ -1,6 +1,6 @@
 # ##########################################
 # Linux-generalize-host-Capture-FDZ
-# Version: 0.5
+# Version: 0.6
 ###########################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -39,7 +39,7 @@ OS_Type="$(cat OS-Type)"
 echo " OS_Type: $OS_Type" 
 
 # The output of the following echo commands goes 
-# into the Golden-Image ./ImageStreamerCapture file.
+# into the Image Streamer ./ImageStreamerCapture file.
 echo " HPE Image Streamer Capture for $OS_Type " > ./ImageStreamerCapture
 echo " Complete generalization by host state removal" >> ./ImageStreamerCapture
 echo -n " " >> ./ImageStreamerCapture

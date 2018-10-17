@@ -1,6 +1,6 @@
 # #############################################
 # Linux-configure-multiple-NICs-Deploy-FDZ
-# Version 0.7
+# Version 0.8
 # #############################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -29,7 +29,7 @@ echo "\tPrepare network configuration script to be executed at next reboot"
 
 # The output of the echo commands present in the following script goes
 # in the operating system log file. Typically /var/log/messages.
-# use the following command to view them once the OS-Volume 
+# Use the following command to view them once the OS-Volume 
 # has been deployed and booted:
 # grep rc.local /var/log/messages
 
@@ -301,5 +301,6 @@ echo "\tLaunch the network-configuration script and populate the RC file"
 # The following command copies-out the above script into the Image Streamer.
 download /temp/ImageStreamer/network-configuration ./network-configuration
 
-# The following command asks the Image Streamer to execute the above script.
+# The following command asks the Image Streamer to execute the above script
+# that will populate the NICs configuration file.
 !source ./network-configuration
