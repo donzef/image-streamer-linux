@@ -5,7 +5,7 @@
 # names.
 #
 # Typical invocation:
-#     ./artifact-sources.bash ../artifacts-bundles/Didactic-Linux-MultiDistro-Artifact-Bundle-V0.2-FDZ.zip
+#     ./artifact-sources.bash ../artifacts-bundles/Didactic-Linux-MultiDistro-Artifact-Bundle-V0.3-FDZ.zip
 
 # Version: 0.3
 
