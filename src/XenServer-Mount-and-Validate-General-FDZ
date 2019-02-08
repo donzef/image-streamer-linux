@@ -1,6 +1,6 @@
 # ##########################################
-# Linux-Mount-and-Validate-General-FDZ
-# Version: 0.6
+# XenServer-Mount-and-Validate-General-FDZ
+# Version: 0.1
 # ##########################################
 
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
@@ -16,10 +16,10 @@
 
 
 # NOTE: The output of guestfish commands goes to the OS-Volume
-# Activity log file ONLY if the first mount command is successful.
-# If the first mount command fails, you must check the
-# Image Streamer Activity log file to understand why
-# the first mount command failed.
+#              Activity log file ONLY if the first mount command is successful.
+#              If the first mount command fails, you must check the
+#              Image Streamer Activity log file to understand why
+#              the first mount command failed.
 
 
 
@@ -64,7 +64,7 @@ echo
 # guestfish incorrectly proposes the vfat/UEFI partition 
 # as an OS. Hence we remove the vfat partition from the 
 # ./OS-Dev file:
-!if [ $(cat ./OS-Dev | wc -l) -eq 2 ] ;then VFAT_DEV=$(awk -F ":" '/vfat/ {print $1}' list-fs); awk -v vfat_dev=$VFAT_DEV '$0 != vfat_dev {print $0}' ./OS-Dev > ./OS-Dev2 ; mv ./OS-Dev2 ./OS-Dev ; fi
+!if [ $(cat ./OS-Dev | wc -l) -eq 2 ] ;then  VFAT_DEV=$(awk -F ":" '/vfat/ {print $1}' list-fs); awk -v vfat_dev=$VFAT_DEV '$0 != vfat_dev {print $0}' ./OS-Dev > ./OS-Dev2 ; mv ./OS-Dev2 ./OS-Dev ; fi
 
 # Create the mount command and execute it. The !awk 
 # command is executed by the Image Streamer. It prints
@@ -88,20 +88,29 @@ echo "Mount Command:"
 # command to do the same.
 cat /etc/os-release | awk -F '"' '/^ID=/ {print $2}' > ./OS-Type
 
-# Some OSs like CentOS and XenServer need the
+!echo -n "OS-Type: "
+!cat ./OS-Type
+
+# Some OSs like CentOS and XerServer need the
 # bootloader in the /EFI/BOOT directory of the UEFI vfat partition. 
-# 
+#
 # NOTE: the following code should be re-written with a case-esac to be nicer....
 #
-# CentOS
-<!if [[ $(grep -q "centos" ./OS-Type) ]] ; then echo 'echo "CentOS: Copying the bootloader in the /EFI/BOOT directory of the UEFI partition."' ; fi
-<!if [[ $(grep -q "centos" ./OS-Type) ]] ; then awk -F ":" '/vfat/ {print "-mount", $1, "/boot"}' ./list-fs; fi
-<!if [[ $(grep -q "centos" ./OS-Type) ]] ; then echo "cp /boot/EFI/centos/grubx64.efi /boot/EFI/BOOT/." ; fi
 
 # XenServer
-<!if [[ $(grep -q "xen" ./OS-Type) ]] ; then echo 'echo "XenServer: Copying the bootloader in the /EFI/BOOT directory of the UEFI partition."' ; fi
-<!if [[ $(grep -q "xen" ./OS-Type) ]] ; then awk -F ":" '/vfat/ {print "-mount", $1, "/boot"}' ./list-fs; fi
-<!if [[ $(grep -q "xen" ./OS-Type) ]] ; then echo "cp /boot/EFI/xenserver/grubx64.efi /boot/EFI/BOOT/." ; fi
+<!if [[ ! $(grep -q "xen" ./OS-Type) ]] ; then echo 'echo "XenServer: Copying the bootloader in the /EFI/BOOT directory of the UEFI partition."' ; fi
+<!if [[ ! $(grep -q "xen" ./OS-Type) ]] ; then awk -F ":" '/vfat/ {print "-mount", $1, "/boot"}' ./list-fs; fi
+<!if [[ ! $(grep -q "xen" ./OS-Type) ]] ; then echo "-mkdir /boot/EFI/BOOT " ; echo "cp /boot/EFI/xenserver/grubx64.efi /boot/EFI/BOOT/bootx64.efi" ; fi
+
+upload -<<END /boot/EFI/BOOT/bootx64.cfg
+default=0
+timeout=2
+title Chainloader switch to Xenserver
+    root (hd0,0)
+    chainloader /EFI/XENSERVER/GRUBX64.EFI
+END
+
+
 
 # The output of the following guestfish command
 # goes in the OS-Volume Activity log file.
@@ -128,15 +137,15 @@ echo "Check Image Streamer capture details"
 upload -<<END /temp/ImageStreamer/check_capture
 #!/bin/bash
 if [ -f ./ImageStreamerCapture ]; then
- echo "Capture details:"
- cat ./ImageStreamerCapture
+    echo  "Capture details:"
+    cat ./ImageStreamerCapture
 else
- echo
- echo "WARNING: Golden Image not captured by Image Streamer."
- echo "Golden Image may not be prepared for correct personalization."
- echo "Recommend deploying Golden Image as is and capturing a new"
- echo "Golden Image using Image Streamer via correct capture Build Plan"
- echo
+    echo
+    echo "WARNING:  Golden Image not captured by Image Streamer."
+    echo "Golden Image may not be prepared for correct personalization."
+    echo "Recommend deploying Golden Image as is and capturing a new"
+    echo "Golden Image using Image Streamer via correct capture Build Plan"
+    echo
 fi
 echo
 END
@@ -192,3 +201,4 @@ echo "Make sure RC file begins with !#/bin/bash"
 
 echo "print out the content the RC file for debug purposes." 
 !cat ./RC-FILE
+

@@ -216,7 +216,7 @@ echo "\tThe number of NICs to configure is automatically calculated using the Ne
 # TODO: Offer the possibility to configure less NICs than present in the profile.
 
 # The following command creates a bash script in the OS-Volume. 
-# This script will be copied-out to the Image Streamer and executed their.
+# This script will be copied-out to the Image Streamer and executed there.
 # Its goal is to generate all the necessary entries in the RC-FILE for each NIC 
 # that has to be configured.
 # NOTE: The Custom Attributes are expanded during the creation of the script.
