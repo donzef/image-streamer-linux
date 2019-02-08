@@ -1,6 +1,6 @@
 # #############################################
 # Linux-configure-multiple-NICs-Deploy-FDZ
-# Version 0.8
+# Version 0.91
 # #############################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -70,7 +70,7 @@ mask2cidr() {
 # Retrieve OS-Type and set OS-Type dependent variables.
 OS_Type=$(cat /temp/OS-Type)
 case $OS_Type in
- rhel|centos)
+ rhel|centos|xenenterprise)
  NET_DIR="network-scripts"
  RC_FILE="rc.local" 
  ;;
@@ -85,7 +85,7 @@ case $OS_Type in
 esac
 
 
-# Check the presence of Netwok Manager only on RHEL and CentOS:
+# Check the presence of Netwok Manager only on RHEL CentOS:
 if [ "$OS_Type" == "rhel" -o "$OS_Type" == "centos" ] ; then 
  echo -e "\tChecking presence of NetworkManager..."
  if [[ ! $(systemctl -t service --all | grep NetworkManager.service) ]] ; then
@@ -132,7 +132,7 @@ fi
 # Remember that $net_ip is the third arg ($3).
 
 case $OS_Type in
- rhel|centos)
+ rhel|centos|xenenterprise)
 if [[ -z $net_ip ]]
 then
  if [ $vlan -ne 0 ];then
@@ -226,7 +226,7 @@ upload -<<END /temp/ImageStreamer/network-configuration
 # Retrieve OS-Type and set OS-Type dependent variables.
 OS_Type=$(cat OS-Type)
 case $OS_Type in
- rhel|centos)
+ rhel|centos|xenenterprise)
  NET_DIR="network-scripts"
  RC_FILE="rc.local" 
  ;;
