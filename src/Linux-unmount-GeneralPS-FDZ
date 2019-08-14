@@ -1,6 +1,6 @@
 #################################################
-# Linux-unmount-General-FDZ
-# Version: 0.4
+# Linux-unmount-GeneralPS-FDZ
+# Version: 0.41
 #################################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -16,7 +16,7 @@
 # The following 4 echo commands are executed by the guestfish shell.
 # Their output goes in the OS-Volume Activity log file.
 echo "======================================="
-echo "Linux-unmount-General-FDZ"
+echo "Linux-unmount-GeneralPS-FDZ"
 echo "======================================="
 echo "Program the restore of the original RC file as last line of the ImageStreamer modified RC file"
 

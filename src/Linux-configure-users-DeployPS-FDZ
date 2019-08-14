@@ -1,5 +1,5 @@
 # ############################################
-# Linux-configure-users-Deploy-FDZ
+# Linux-configure-users-DeployPS-FDZ
 # Version: 0.4
 #############################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
@@ -16,7 +16,7 @@
 # The output of the following 4 guestfish echo commands goes
 # in the OS-Volume Activity log file.
 echo "======================================="
-echo "Linux-configure-users-Deploy-FDZ"
+echo "Linux-configure-users-DeployPS-FDZ"
 echo "======================================="
 echo "\tPrepare sript to change root's password during next reboot"
 

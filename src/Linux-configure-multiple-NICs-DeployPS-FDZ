@@ -1,6 +1,6 @@
 # #############################################
-# Linux-configure-multiple-NICs-Deploy-FDZ
-# Version 0.91
+# Linux-configure-multiple-NICs-DeployPS-FDZ
+# Version 0.81
 # #############################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -16,7 +16,7 @@
 # The following echo commands are performed by the guestfish shell.
 # Their output is present in the OS-Volume Activity log file.
 echo "======================================="
-echo "Linux-configure-multiple-NICs-Deploy-FDZ"
+echo "Linux-configure-multiple-NICs-DeployPS-FDZ"
 echo "======================================="
 
 # The following echo command is performed by the guestfish shell.
@@ -70,7 +70,7 @@ mask2cidr() {
 # Retrieve OS-Type and set OS-Type dependent variables.
 OS_Type=$(cat /temp/OS-Type)
 case $OS_Type in
- rhel|centos|xenenterprise)
+ rhel|centos)
  NET_DIR="network-scripts"
  RC_FILE="rc.local" 
  ;;
@@ -85,7 +85,7 @@ case $OS_Type in
 esac
 
 
-# Check the presence of Netwok Manager only on RHEL CentOS:
+# Check the presence of Netwok Manager only on RHEL and CentOS:
 if [ "$OS_Type" == "rhel" -o "$OS_Type" == "centos" ] ; then 
  echo -e "\tChecking presence of NetworkManager..."
  if [[ ! $(systemctl -t service --all | grep NetworkManager.service) ]] ; then
@@ -132,7 +132,7 @@ fi
 # Remember that $net_ip is the third arg ($3).
 
 case $OS_Type in
- rhel|centos|xenenterprise)
+ rhel|centos)
 if [[ -z $net_ip ]]
 then
  if [ $vlan -ne 0 ];then
@@ -216,7 +216,7 @@ echo "\tThe number of NICs to configure is automatically calculated using the Ne
 # TODO: Offer the possibility to configure less NICs than present in the profile.
 
 # The following command creates a bash script in the OS-Volume. 
-# This script will be copied-out to the Image Streamer and executed there.
+# This script will be copied-out to the Image Streamer and executed their.
 # Its goal is to generate all the necessary entries in the RC-FILE for each NIC 
 # that has to be configured.
 # NOTE: The Custom Attributes are expanded during the creation of the script.
@@ -226,7 +226,7 @@ upload -<<END /temp/ImageStreamer/network-configuration
 # Retrieve OS-Type and set OS-Type dependent variables.
 OS_Type=$(cat OS-Type)
 case $OS_Type in
- rhel|centos|xenenterprise)
+ rhel|centos)
  NET_DIR="network-scripts"
  RC_FILE="rc.local" 
  ;;

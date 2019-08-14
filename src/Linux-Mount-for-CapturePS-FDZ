@@ -1,6 +1,6 @@
 # ###########################################
-# Linux-Mount-for-Capture-FDZ
-# Version: 0.3
+# Linux-Mount-for-CapturePS-FDZ
+# Version: 0.5
 ############################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -24,7 +24,7 @@
 # The output of the following guestfish echo commands goes into
 # The Golden Image Activity log file.
 echo "======================================="
-echo "Linux-Mount-for-Capture-FDZ"
+echo "Linux-Mount-for-CapturePS-FDZ"
 echo "======================================="
 
 # Un-comment the following guestfish commands if you need them.
@@ -62,9 +62,11 @@ echo
 
 # NOTE: The following is a dirty fix of a potentially buggy inspect-os 
 # returning more than one OS in the Golden Image. Basically, we noticed that 
-# guestfish incorrectly propose the vfat/UEFI partition 
+# guestfish incorrectly proposes the vfat/UEFI partition 
 # as an OS. Hence we remove the vfat partition from the 
 # ./OS-Dev file:
+# TBD: Verify that this command still works in Image Streamer 5.0 which running a more
+# recent version of guestfish.
 !if [ $(cat ./OS-Dev | wc -l) -eq 2 ] ;then VFAT_DEV=$(awk -F ":" '/vfat/ {print $1}' list-fs); awk -v vfat_dev=$VFAT_DEV '$0 != vfat_dev {print $0}' ./OS-Dev > ./OS-Dev2 ; mv ./OS-Dev2 ./OS-Dev ; fi
 
 # Create the mount command and execute it. The !awk 
@@ -73,7 +75,7 @@ echo
 # The "<" sign tells guestfish to execute the mount command.
 echo "Mount Command:"
 
-# Print the mount command for debug purposes:
+# Print the mount command for debug purposes in the Golden Image Activity log file:
 !awk '/dev/ {print "mount", $0, "/"}' ./OS-Dev
 
 # Perform the mount command:

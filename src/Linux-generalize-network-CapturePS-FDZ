@@ -1,5 +1,5 @@
 # ############################################
-# Linux-generalize-network-Capture-FDZ
+# Linux-generalize-network-CapturePS-FDZ
 # Version: 0.5
 #############################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
@@ -16,7 +16,7 @@
 #The output of the following guestfish echo commands goes
 # into the Golden Image Activity log file.
 echo "======================================="
-echo "Linux-generalize-network-Capture-FDZ"
+echo "Linux-generalize-network-CapturePS-FDZ"
 echo "======================================="
 
 # Create a temporary directory in the Image Streamer

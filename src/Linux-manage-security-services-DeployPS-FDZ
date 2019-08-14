@@ -1,6 +1,6 @@
 # #################################################
-# Linux-manage-security-services-Deploy-FDZ
-# Version: 0.4
+# Linux-manage-security-services-DeployPS-FDZ
+# Version: 0.41
 # #################################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -16,7 +16,7 @@
 # The following echo commands is executed by the guestfish shell
 # Its output will be written to the OS Volume Activity log file.
 echo "======================================="
-echo "Linux-manage-security-services-Deploy-FDZ"
+echo "Linux-manage-security-services-DeployPS-FDZ"
 echo "======================================="
 
 # Copy-out the OS-Volume /etc/selinux/config into the Image Streamer:

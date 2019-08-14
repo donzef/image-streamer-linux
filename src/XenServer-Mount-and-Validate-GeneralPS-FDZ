@@ -1,6 +1,6 @@
 # ##########################################
-# Linux-Mount-and-Validate-General-FDZ
-# Version: 0.6
+# XenServer-Mount-and-Validate-GeneralPS-FDZ
+# Version: 0.11
 # ##########################################
 
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
@@ -26,7 +26,7 @@
 # The output of the following guestfish echo commands goes 
 # into the OS-Volume Activity log file.
 echo "======================================="
-echo "Linux-Mount-and-Validate-General-FDZ"
+echo "Linux-Mount-and-Validate-GeneralPS-FDZ"
 echo "======================================="
 echo "Version of the libguestfs running in the Image Streamer:"
 version
@@ -88,20 +88,29 @@ echo "Mount Command:"
 # command to do the same.
 cat /etc/os-release | awk -F '"' '/^ID=/ {print $2}' > ./OS-Type
 
-# Some OSs like CentOS and XenServer need the
+!echo -n "OS-Type: "
+!cat ./OS-Type
+
+# Some OSs like CentOS and XerServer need the
 # bootloader in the /EFI/BOOT directory of the UEFI vfat partition. 
-# 
+#
 # NOTE: the following code should be re-written with a case-esac to be nicer....
 #
-# CentOS
-<!if [[ $(grep -q "centos" ./OS-Type) ]] ; then echo 'echo "CentOS: Copying the bootloader in the /EFI/BOOT directory of the UEFI partition."' ; fi
-<!if [[ $(grep -q "centos" ./OS-Type) ]] ; then awk -F ":" '/vfat/ {print "-mount", $1, "/boot"}' ./list-fs; fi
-<!if [[ $(grep -q "centos" ./OS-Type) ]] ; then echo "cp /boot/EFI/centos/grubx64.efi /boot/EFI/BOOT/." ; fi
 
 # XenServer
-<!if [[ $(grep -q "xen" ./OS-Type) ]] ; then echo 'echo "XenServer: Copying the bootloader in the /EFI/BOOT directory of the UEFI partition."' ; fi
-<!if [[ $(grep -q "xen" ./OS-Type) ]] ; then awk -F ":" '/vfat/ {print "-mount", $1, "/boot"}' ./list-fs; fi
-<!if [[ $(grep -q "xen" ./OS-Type) ]] ; then echo "cp /boot/EFI/xenserver/grubx64.efi /boot/EFI/BOOT/." ; fi
+<!if [[ ! $(grep -q "xen" ./OS-Type) ]] ; then echo 'echo "XenServer: Copying the bootloader in the /EFI/BOOT directory of the UEFI partition."' ; fi
+<!if [[ ! $(grep -q "xen" ./OS-Type) ]] ; then awk -F ":" '/vfat/ {print "-mount", $1, "/boot"}' ./list-fs; fi
+<!if [[ ! $(grep -q "xen" ./OS-Type) ]] ; then echo "-mkdir /boot/EFI/BOOT " ; echo "cp /boot/EFI/xenserver/grubx64.efi /boot/EFI/BOOT/bootx64.efi" ; fi
+
+upload -<<END /boot/EFI/BOOT/bootx64.cfg
+default=0
+timeout=2
+title Chainloader switch to Xenserver
+ root (hd0,0)
+ chainloader /EFI/XENSERVER/GRUBX64.EFI
+END
+
+
 
 # The output of the following guestfish command
 # goes in the OS-Volume Activity log file.

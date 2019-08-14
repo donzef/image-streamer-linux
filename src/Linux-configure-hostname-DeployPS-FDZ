@@ -1,6 +1,6 @@
 # ############################################
-# Linux-configure-hostname-Deploy-FDZ
-# Version: 0.5
+# Linux-configure-hostname-DeployPS-FDZ
+# Version: 0.51
 # ############################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -16,7 +16,7 @@
 # The output of the following 4 guestfish echo commands goes
 # to the OS-Volume Activity log.
 echo "======================================="
-echo "Linux-configure-hostname-Deploy-FDZ"
+echo "Linux-configure-hostname-DeployPS-FDZ"
 echo "======================================="
 echo "\tManual configuration of /etc/hostname"
 
