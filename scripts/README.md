@@ -6,4 +6,4 @@ Scripts to maintain this project
 
 ## Content
 
-* `artifact.bash`: extracts Plan Scripts from the Artifact Bundle and rename them with their meaningful names.
+* `artifact.bash`: extracts Build Plans and Plan Scripts from the supplied Artifact Bundle and rename them with their meaningful names.
