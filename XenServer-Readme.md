@@ -21,7 +21,7 @@
 
 * Enter `Yes` to the Attach iSCSI disks dialog box
 
-* ...
+* ...TBD
 
 
 
