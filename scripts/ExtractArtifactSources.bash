@@ -9,7 +9,7 @@
 # Typical invocation:
 #     ./artifact-sources.bash ../artifacts-bundles/Didactic-Linux-MultiDistro-Artifact-Bundle-V0.3-FDZ.zip
 
-# Version: 0.33
+# Version: 0.34
 
 # Check argument(s)
 NUM_ARG=1
@@ -22,10 +22,10 @@ fi
 # Variables initialization
 JQ=$(which jq 2> /dev/null)
 UNZIP=$(which unzip 2> /dev/null)
-ARTIFACT=$1
-SRC_DIR="../src"
-PlanScript_DIR=${SRC_DIR}/PlanScripts
-BuildPlan_DIR=${SRC_DIR}/BuildPlans
+ARTIFACT_PATH=$1
+ARTIFACT_NAME=$(basename ${ARTIFACT_PATH})
+ARTIFACT_BASENAME=$(basename $ARTIFACT_PATH '.zip')
+ARTIFACT_DIR="${PWD}/$(dirname ${ARTIFACT_PATH})"
 
 # Check Requirements
 
@@ -39,25 +39,41 @@ if [ -z $UNZIP ] ; then
    exit 2 
 fi
 
-# Verify ARTIFACT exists and is potentially a real .zip file
-if [[ ! -f $ARTIFACT || $(file $ARTIFACT | grep -q "Zip archive data") ]] ; then
+# Verify ARTIFACT exists and is a real .zip file
+if [[ ! -f $ARTIFACT_PATH || $(file $ARTIFACT_PATH | grep -q "Zip archive data") ]] ; then
    echo "Artifact file dos not exists or is not a .ZIP file" 
    echo "Exiting...." 
    exit 3
 fi
 
-# Remove all files ending with -FDZ
-cd ${SRC_DIR}
-mkdir ${PlanScript_DIR} > /dev/null 2>&1
-mkdir ${BuildPlan_DIR}  > /dev/null 2>&1
-rm -f *-FDZ 2> /dev/null
+# make sure where we are
+cd ${ARTIFACT_DIR}
+echo $PWD
 
-# unzip locally
-unzip $ARTIFACT -d .
+# From there build the recipient paths
+SRC_DIR="../src"
+# ToDo: verify SRC_DIR exists
+PlanScript_DIR=${SRC_DIR}/${ARTIFACT_BASENAME}/PlanScripts
+BuildPlan_DIR=${SRC_DIR}/${ARTIFACT_BASENAME}/BuildPlans
+
+# Create recipient directories and somehow cleanup
+# to avoid interactive questions from unzip
+mkdir -p ${SRC_DIR} >/dev/null 2>&1
+cd ${SRC_DIR}
+mkdir -p ${PlanScript_DIR} > /dev/null 2>&1
+mkdir -p ${BuildPlan_DIR}  > /dev/null 2>&1
+rm *.json SHA256SUM.sha256sum > /dev/null 2>&1
+
+# unzip locally abruptly (overwrite existing files).
+unzip -o ../artifact-bundles/$ARTIFACT_BASENAME -d .
 
 # 
 PS_LIST=$(ls *_planscript.json 2>/dev/null)
 BP_LIST=$(ls *_buildplan.json 2>/dev/null)
+
+# Move the Manifest file, containing the artifact description
+# into a README.md filename
+mv MANIFEST.MF ${ARTIFACT_BASENAME}/README.md
 
 # Extract script sources from the .json files
 for f in $PS_LIST ; do
@@ -112,7 +128,9 @@ __EOF__
 done
 
 # Cleanup 
-rm *.json MANIFEST.MF SHA256SUM.sha256sum > /dev/null 2>&1
+echo
+echo "Cleanup"
+rm *.json SHA256SUM.sha256sum > /dev/null 2>&1
 
 exit 0
 
