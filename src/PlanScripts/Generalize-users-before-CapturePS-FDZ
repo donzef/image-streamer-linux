@@ -1,6 +1,10 @@
+# Plan Script Description:
+# Remove user accounts created during a previous deployment and before a new 
+# Capture. Tested on RHEL 7.5, CentOS 7.5, SLE 15 and XenServer 7.6.
+
 # ##########################################
-# Linux-generalize-users-CapturePS-FDZ
-# Version: 0.51
+# Generalize-users-before-CapturePS-FDZ
+# Version: 0.53
 ###########################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -17,10 +21,11 @@
 
 # The output of the following echo commands goes
 # in the Golden Image Activity log file.
+echo
 echo "======================================="
-echo "Linux-generalize-users-CapturePS-FDZ"
+echo "Generalize-users-before-CapturePS-FDZ"
 echo "======================================="
-echo "Copy out user passwd and group files"
+echo " Copy out user passwd and group files"
 
 # The following 5 commands copy files and dirs from
 # the Golden Image out to the Image Streamer 
@@ -49,13 +54,12 @@ users=$(awk -F ':' '/^#START/ {i=1; next;}; i && i++ <= i && ! /^#END/ {print $1
 
 # The output of the the following command goes into
 # the Golden Image Activity log file.
-echo "Removing /home dirs and /var/mail files of the users to be cleaned-up" 
+echo " Removing /home dirs and /var/mail files of the users to be cleaned-up" 
 for user in $users; do
- rm -rf /home/$user
- rm -rf /var/mail/$user
+ rm -rf /home/$user > /dev/null 2>&1
+ rm -rf /var/mail/$user > /dev/null 2>&1
 done
 
-#unlink $0
 exit 0
 END
 
@@ -80,7 +84,6 @@ echo -e "\tRemoving users added by ImageStreamer in passwd and group files"
 sed -i '/^#START/,/^#END/{/^#START/d;d;}' ./passwd
 sed -i '/^#START/,/^#END/{/^#START/d;d;}' ./group
 
-unlink $0
 exit 0
 END
 

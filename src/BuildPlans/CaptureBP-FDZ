@@ -1,0 +1,21 @@
+Build Plan properties summary
+
+
+Name: CaptureBP-FDZ
+Type: capture
+ID  : 8a4745bf-1e3d-4026-9a06-e6cc26a93b47
+Description: Capture Golden Images. Tested with CentOS 7.6 and XenServer 7.6
+
+Steps:
+Mount-and-Validate-GeneralPS-FDZ
+Generalize-host-before-CapturePS-FDZ
+Generalize-network-before-CapturePS-FDZ
+Generalize-users-before-CapturePS-FDZ
+Clean-up-after-CapturePS-FDZ
+Unmount-GeneralPS-FDZ
+
+Custom Attributes:
+
+
+
+

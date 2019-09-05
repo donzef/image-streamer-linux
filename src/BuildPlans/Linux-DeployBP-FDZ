@@ -1,0 +1,107 @@
+Build Plan properties summary
+
+
+Name: Linux-DeployBP-FDZ
+Type: deploy
+ID  : 2caa0acc-deca-47ce-b474-6a00003dbe59
+Description: Deploys Linux. Not suitable for XenServer Tested with CentOS-1810 and SLE 15
+
+Steps:
+Mount-and-Validate-GeneralPS-FDZ
+Prepare-for-DeploymentPS-FDZ
+Linux-configure-multiple-NICs-DeployPS-FDZ
+Linux-configure-hostname-DeployPS-FDZ
+Linux-configure-users-DeployPS-FDZ
+Linux-manage-security-services-DeployPS-FDZ
+Finalize-DeploymentPS-FDZ
+Unmount-GeneralPS-FDZ
+
+Custom Attributes:
+
+  {
+    "name": "SELinux",
+    "description": "",
+    "value": "disabled",
+    "constraints": "{}",
+    "type": "string"
+  },
+  {
+    "name": "DomainName",
+    "description": "",
+    "value": "etss.lab",
+    "constraints": "{\"regex\":\"\",\"helpText\":\"\"}",
+    "type": "string"
+  },
+  {
+    "name": "NIC4",
+    "description": "",
+    "value": null,
+    "constraints": "{\"ipv4static\":true,\"ipv4dhcp\":true,\"ipv4disable\":true,\"parameters\":\"dns1\",\"dns2\",\"domain\",\"gateway\",\"ipaddress\",\"mac\",\"netmask\",\"vlanid\"}",
+    "type": "nic"
+  },
+  {
+    "name": "NewUsersPassword",
+    "description": "",
+    "value": "password",
+    "constraints": "{\"regex\":\"\",\"helpText\":\"\"}",
+    "type": "string"
+  },
+  {
+    "name": "SELinuxType",
+    "description": "",
+    "value": "targeted",
+    "constraints": "{}",
+    "type": "string"
+  },
+  {
+    "name": "SSH",
+    "description": "",
+    "value": "Enabled",
+    "constraints": "{}",
+    "type": "string"
+  },
+  {
+    "name": "NewRootPassword",
+    "description": "",
+    "value": "password",
+    "constraints": "{\"regex\":\"\",\"helpText\":\"\"}",
+    "type": "string"
+  },
+  {
+    "name": "NIC1",
+    "description": "",
+    "value": null,
+    "constraints": "{\"ipv4static\":true,\"ipv4dhcp\":true,\"ipv4disable\":true,\"parameters\":\"dns1\",\"dns2\",\"domain\",\"gateway\",\"ipaddress\",\"mac\",\"netmask\",\"vlanid\"}",
+    "type": "nic"
+  },
+  {
+    "name": "NewUsers",
+    "description": "",
+    "value": "toto,titi",
+    "constraints": "{\"regex\":\"\",\"helpText\":\"\"}",
+    "type": "string"
+  },
+  {
+    "name": "NIC2",
+    "description": "",
+    "value": null,
+    "constraints": "{\"ipv4static\":true,\"ipv4dhcp\":true,\"ipv4disable\":true,\"parameters\":\"dns1\",\"dns2\",\"domain\",\"gateway\",\"ipaddress\",\"mac\",\"netmask\",\"vlanid\"}",
+    "type": "nic"
+  },
+  {
+    "name": "HostName",
+    "description": "",
+    "value": "centosfdz",
+    "constraints": "{\"regex\":\"\",\"helpText\":\"\"}",
+    "type": "string"
+  },
+  {
+    "name": "NIC3",
+    "description": "",
+    "value": null,
+    "constraints": "{\"ipv4static\":true,\"ipv4dhcp\":true,\"ipv4disable\":true,\"parameters\":\"dns1\",\"dns2\",\"domain\",\"gateway\",\"ipaddress\",\"mac\",\"netmask\",\"vlanid\"}",
+    "type": "nic"
+  }
+
+
+

@@ -1,7 +1,11 @@
-# ##########################################
-# LInux-unmount-CapturePS-FDZ
-# Version: 0.4
-###########################################
+# Plan Script Description:
+# Unmounts all the guestfish mounted partition(s). It can be used in both Capture 
+# and Deploy OS Build Plans
+
+#################################################
+# Unmount-GeneralPS-FDZ
+# Version: 0.44
+#################################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,17 +17,16 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-# The following echo commands are executed by the guestfish shell.
-# Their output goes into the Golden image Activity log file.
+# The following 4 echo commands are executed by the guestfish shell.
+# Their output goes in the OS-Volume Activity log file.
+echo
 echo "======================================="
-echo "Linux-unmount-Capture-FDZ"
+echo "Unmount-GeneralPS-FDZ"
 echo "======================================="
 
-#Remove the temporary directory created in the OS-Volume.
-# using the guestfish rm-rf command.
-#rm-rf /temp/ImageStreamer
-
-# The output of the following guestfish echo command goes
-# to the Golden image Activity log file.
-echo "\tunmount all guestfish partitions"
+# The following commands are executed by the guestfish shell. 
+# Their output goes in the OS-Volume Activity log file.
+echo " Unmount all guestfish mounted partition(s)"
 unmount-all
+echo
+echo

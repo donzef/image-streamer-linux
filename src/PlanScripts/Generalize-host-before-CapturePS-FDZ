@@ -1,6 +1,10 @@
+# Plan Script Description:
+# Remove host configuration before capture. Tested with with RHEL7.5, CentOS 7.5, 
+# SLE 15 and XenServer 7.1.
+
 # ##########################################
-# Linux-generalize-host-CapturePS-FDZ
-# Version: 0.7
+# Generalize-host-before-CapturePS-FDZ
+# Version: 0.72
 ###########################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -16,8 +20,9 @@
 
 # The output of the following echo commands goes
 # in the Golden-Image Activity log file.
+echo
 echo "======================================="
-echo "Linux-generalize-host-CapturePS-FDZ"
+echo "Generalize-host-before-CapturePS-FDZ"
 echo "======================================="
 
 # The following bash script will be executed by the Image Streamer shell,
@@ -51,7 +56,7 @@ END
 download /temp/ImageStreamer/capture_details ./capture_details
 
 # Execution of the above script in the Image Streamer.
-# The result of this execution is the /ImageStreamerCapture file.
+# The result of this execution is the /temp/ImageStreamerCapture file.
 !source ./capture_details
 
 # Pull in the file from the Image Streamer to the Golden Image.
@@ -147,3 +152,4 @@ rm-f /temp/ImageStreamer/generalize_hosts
 echo " Generalize /etc/init.d directory"
 rm-f /etc/init.d/delete_def_route
 rm-f /etc/init.d/rm_del_def_route
+echo

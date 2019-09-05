@@ -1,6 +1,10 @@
+# Plan Script Description:
+# Set root password and create user accounts during the deployment process. 
+# Tested successfully with RHEL 7.5, CentOS 7.5 and SLE 15.
+
 # ############################################
 # Linux-configure-users-DeployPS-FDZ
-# Version: 0.4
+# Version: 0.42
 #############################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -15,6 +19,7 @@
 
 # The output of the following 4 guestfish echo commands goes
 # in the OS-Volume Activity log file.
+echo
 echo "======================================="
 echo "Linux-configure-users-DeployPS-FDZ"
 echo "======================================="
@@ -23,6 +28,7 @@ echo "\tPrepare sript to change root's password during next reboot"
 # The following bash script is written in the OS-Volume
 # /temp/change_root_passwd file. It will be executed by 
 # RC-FILE during next reboot.
+# Debug: Look for string .local in /var/log/messages 
 upload -<<END /temp/change_root_passwd
 #! /bin/bash
 # The following echo commands write the name of this script
@@ -58,6 +64,7 @@ echo "\tand set their password."
 
 # The following script will be executed by the RC file
 # during the next reboot (see below).
+# Debug: Look for string .local in /var/log/messages
 upload -<<END /temp/add_users
 #!/bin/bash
 

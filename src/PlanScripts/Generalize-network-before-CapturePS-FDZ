@@ -1,6 +1,10 @@
+# Plan Script Description:
+# Remove network settings depending on the OS-Type before golden image capture. 
+# Tested with RHEL 7.5, CentOS 7.5, SLE 15 and XenServer 7.1
+
 # ############################################
-# Linux-generalize-network-CapturePS-FDZ
-# Version: 0.5
+# Generalize-network-before-CapturePS-FDZ
+# Version: 0.52
 #############################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -15,8 +19,9 @@
 
 #The output of the following guestfish echo commands goes
 # into the Golden Image Activity log file.
+echo
 echo "======================================="
-echo "Linux-generalize-network-CapturePS-FDZ"
+echo "Generalize-network-before-CapturePS-FDZ"
 echo "======================================="
 
 # Create a temporary directory in the Image Streamer
@@ -91,6 +96,6 @@ echo " Remove SSH host keys"
 -glob rm-rf /etc/ssh/ssh_host_*
 
 
-echo -e " Clear the resolv.conf file"
+echo " Clear the resolv.conf file"
 upload -<<END /etc/resolv.conf
 END

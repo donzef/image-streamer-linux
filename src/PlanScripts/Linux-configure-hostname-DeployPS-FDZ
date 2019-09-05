@@ -1,6 +1,13 @@
+# Plan Script Description:
+# Configure hostname and populate the network directory with ifcfg-* files and 
+# /etc/hosts. NOTE: This script MUST be executed after the 
+# Linux-configure-multiple-NICs-Deploy Plan Script. NOTE: The hostname is 
+# associated to the IP address of the first discovered NIC, which is shell 
+# variable iface=${array[0]}) NOTE: Not suitable for XenServer
+
 # ############################################
 # Linux-configure-hostname-DeployPS-FDZ
-# Version: 0.51
+# Version: 0.53
 # ############################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -15,6 +22,7 @@
 
 # The output of the following 4 guestfish echo commands goes
 # to the OS-Volume Activity log.
+echo
 echo "======================================="
 echo "Linux-configure-hostname-DeployPS-FDZ"
 echo "======================================="
@@ -36,9 +44,12 @@ echo "\tEdit /etc/sysconfig/network file to set the HOSTNAME variable"
 # Hence we add the "-" to the upload command to avoid a
 # bad exit of guestfish.
 -upload -<<END /etc/sysconfig/network
-#This file has been altered by Image Streamer.
+
+# This file has been altered by Image Streamer.
+
 NETWORKING=yes
 HOSTNAME=@HostName@.@DomainName@
+
 END
 
 # The output of the following guestfish echo command goes
@@ -116,7 +127,7 @@ END
 
 # The output of the following guestfish command goes
 # in the OS-Volume Activity log file.
-echo "Add the generated configure_hosts script to the RC file to run at boot time."
+echo " Add the generated configure_hosts script to the RC file to run at boot time."
 
 # The following Image Streamer echo command appends
 # a line in the already present RC file.

@@ -1,6 +1,18 @@
+# Plan Script Description:
+# Configure all the NICs corresponding to the Connections defined in the OneView 
+# Profile. The number of NICs to configure corresponds to the number of connected 
+# NICs defined in the Server Profile. Restrictions: With this version, it is not 
+# possible to configure less NICs than connections present in the Profile. 
+# Moreover, the NICs to configure must be in sequence. For example It is not 
+# possible to configure NIC1 and NIC3 and not NIC2. NOTE: For a maximum of 
+# flexibility, when this Plan Script is included in a Build Plan, make sure, for 
+# each NIC, you edit its Build Plan's Custom Attributes and select all the 
+# offered possibilities: "Allow static", "Allow DHCP", "Allow no network 
+# connection". NOTE: Not suitable for XenServer.
+
 # #############################################
 # Linux-configure-multiple-NICs-DeployPS-FDZ
-# Version 0.81
+# Version 0.82
 # #############################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -15,6 +27,7 @@
 
 # The following echo commands are performed by the guestfish shell.
 # Their output is present in the OS-Volume Activity log file.
+echo
 echo "======================================="
 echo "Linux-configure-multiple-NICs-DeployPS-FDZ"
 echo "======================================="
