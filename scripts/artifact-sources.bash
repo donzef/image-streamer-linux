@@ -1,13 +1,15 @@
 #!/bin/bash
 
-# This script extracts Plan Scripts and Build Plans of the supplied
+# This script extracts Plan Scripts and Build Plans from the supplied
 # artifact bundle and renames them with their meaningful
 # names.
+# In addition, it inserts the description of Plan Scripts at the very
+# beginning of the source output file
 #
 # Typical invocation:
 #     ./artifact-sources.bash ../artifacts-bundles/Didactic-Linux-MultiDistro-Artifact-Bundle-V0.3-FDZ.zip
 
-# Version: 0.32
+# Version: 0.33
 
 # Check argument(s)
 NUM_ARG=1
@@ -54,24 +56,33 @@ rm -f *-FDZ 2> /dev/null
 unzip $ARTIFACT -d .
 
 # 
-PS_LIST=$(ls *_planscript.json)
-BP_LIST=$(ls *_buildplan.json)
+PS_LIST=$(ls *_planscript.json 2>/dev/null)
+BP_LIST=$(ls *_buildplan.json 2>/dev/null)
 
 # Extract script sources from the .json files
 for f in $PS_LIST ; do
-    echo "Processing Plan Script: $f"
     PS_NAME=$($JQ  -r '.name' $f)
+    echo "Extracting Plan Script $PS_NAME from $f"
     PS_FILENAME=$($JQ  -r '.name' $f | tr ' ' "-")
     PS_ID=$($JQ  -r '.id' $f)
+
+    # Insert PlanScript Description at the beginning of PS 
+    # with lines starting with "#"
+    PS_DESCRIPTION=$($JQ  -r '.description' $f)
+    echo "# Plan Script Description:" > ${PlanScript_DIR}/${PS_FILENAME}
+    echo -e $PS_DESCRIPTION | fold -s | sed '1,$s/^/# /' >> ${PlanScript_DIR}/${PS_FILENAME}
+    echo >> ${PlanScript_DIR}/${PS_FILENAME}
+
     PS_CONTENT=$($JQ  '.content' $f)
-    echo -e $PS_CONTENT | sed '1s/^"// ; $s/"$// ; 1,$s/\\"/"/g' > ${PlanScript_DIR}/${PS_FILENAME}
+    # Need to remove manually surrounding quotes on line on first line and last line.
+    echo -e $PS_CONTENT | sed '1s/^"// ; $s/"$// ; 1,$s/\\"/"/g' >> ${PlanScript_DIR}/${PS_FILENAME}
 done
 
 echo
 # Extract Build Plan info from the .json files
 for f in $BP_LIST ; do
-    echo "Processing Build Plan: $f"
     BP_NAME=$($JQ  -r '.name' $f) 
+    echo "Extracting Build Plan $BP_NAME from $f"
     BP_FILENAME=$($JQ  -r '.name' $f | tr ' ' "-") 
     BP_ID=$($JQ  -r '.buildPlanid' $f)
     BP_DESCRIPTION=$($JQ  '.description' $f | tr --delete '"' )
@@ -104,4 +115,5 @@ done
 rm *.json MANIFEST.MF SHA256SUM.sha256sum > /dev/null 2>&1
 
 exit 0
+
 
