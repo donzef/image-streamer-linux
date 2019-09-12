@@ -1,8 +1,8 @@
-# Documentation for Didactic-Linux-MultiDistro-Artifact-Bundle-V0.3-FDZ
+# Multi distro artifact bundles documentation 
 
 ## Description
 
-Simple didactic multi-distro Linux artifact bundle for use with HPE Image Streamer V4.1+.
+Simple didactic multi-distro Linux artifact bundles for use with HPE Image Streamer V4.10 and V4.20.
 
 ## Content
 

@@ -2,7 +2,7 @@
 # Validate the Golden Image/OS-Volume against invalid captures and prepare the RC 
 # file to be modified by the deployment Plan Scripts. When needed, copy the 
 # bootloader in the EFI/BOOT directory of the UEFI partition. Tested with 
-# CentOS-1810, XenServer 7.6. Should work fine with SLE 15
+# CentOS-1810, XenServer 7.6 and Ubuntu 19.04. Should work fine with SLE 15
 
 # ##########################################
 # Prepare-for-DeploymentPS-FDZ

@@ -1,14 +1,14 @@
-# Didactic-Linux-MultiDistro-Artifact-Bundle-V0.3-FDZ
+# Didactic multiDistro artifact bundles (FDZ)
 
 ## Description
 
-Simple didactic multi-distro Linux artifact bundle for use with HPE Image Streamer V4.1+.
+Simple didactic multi-distro Linux oriented artifact bundles for use with HPE Image Streamer V4.10 and V4.20.
 
 This project is a merged fork of the [image-streamer-rhel](https://github.com/HewlettPackard/image-streamer-rhel) and the [image-streamer-sles](https://github.com/HewlettPackard/image-streamer-sles) repositories.
 
-The ultimate goal is to explain how to create Plan Scripts able to capture and deploy various flavors of Linux including XenServer. Currently it provides capture scripts for XenServer 7.1+, RHEL 7, CentOS 7 and  SLE 15. Deploy scripts have not been adapted to XenServer yet.
+The ultimate goal is to explain how to create Plan Scripts able to capture and deploy various flavors of Linux including XenServer. Currently it provides capture scripts for XenServer 7, RHEL 7, CentOS 7, SLE 15 and Ubuntu 19.04.
 
-The provided multi-distro Plan Scripts contain a lot of comments explaining the context of their commands (`guestfish`, OS shell...) as well as the location of their output (OS-Volume Activity, Golden-Image Activity or Image Streamer Activity). They can be used to better understand the `guestfish` mechanic and potentially troubleshoot in case of problem during the development of other scripts.
+The provided multi-distro Plan Scripts contain lots of comments explaining the context of their commands (`guestfish`, OS shell...) as well as the location of their output (OS-Volume Activity, Golden-Image Activity or Image Streamer Activity). They can be used to better understand the `guestfish` mechanic and potentially troubleshoot in case of problem during the development of other scripts.
 
 The targeted audience is system engineers having a basic understanding of the HPE Image Streamer capture and deployment processes and its terminology (i.e. Deployment Plan, Build Plan, Plan Scripts, Artifact Bundle...) and willing to better understand HPE officials plan scripts in order to develop their own Plan Scripts.
 

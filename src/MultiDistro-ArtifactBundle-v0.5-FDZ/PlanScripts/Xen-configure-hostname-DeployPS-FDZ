@@ -4,7 +4,7 @@
 
 # ############################################
 # Xen-configure-hostname-DeployPS-FDZ
-# Version: 0.1
+# Version: 0.2
 # ############################################
 
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
@@ -99,4 +99,4 @@ END
 
 
 echo "\t Tell ./RC-FILE to launch /temp/xenserver_make_unique.sh during first boot" 
-!echo "sh /temp/xenserver_make_unique.sh" >> ./RC-FILE
+!echo "/bin/bash /temp/xenserver_make_unique.sh" >> ./RC-FILE

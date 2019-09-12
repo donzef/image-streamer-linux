@@ -1,10 +1,11 @@
 # Plan Script Description:
 # Remove network settings depending on the OS-Type before golden image capture. 
-# Tested with RHEL 7.5, CentOS 7.5, SLE 15 and XenServer 7.1
+# Tested with RHEL 7.5, CentOS 7.5, SLE 15, XenServer 7.1, 7.6. Although Ubuntu 
+# 19.04 does not generate fatal errors, it is not well integrated.
 
 # ############################################
 # Generalize-network-before-CapturePS-FDZ
-# Version: 0.52
+# Version: 0.53
 #############################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -49,6 +50,9 @@ case $OS_Type in
  sles)
  NET_DIR="network"
  ;;
+ ubuntu)
+ # TBD
+ ;;
  *)
  echo "OS Type $OS_Type not supported. Exiting. " 
  exit 1 
@@ -78,6 +82,7 @@ echo " Removal of the Golden Image network directory"
 
 # Remove the Golden Image network directory 
 # depending on the OS-Type.
+#ToDo: adapt to Ubuntu and its /etc/netplan/* files
 <!awk '/sles/ {print "rm-rf /etc/sysconfig/network"} ; /rhel/ || /centos/ || /xen/ {print "rm-rf /etc/sysconfig/network-scripts"}' ./OS-Type
 
 # Pull-in the cleaned network directory into the Golden Image
@@ -95,7 +100,8 @@ echo " Remove /etc/init.d/ibftT if exists"
 echo " Remove SSH host keys"
 -glob rm-rf /etc/ssh/ssh_host_*
 
-
+# ToDo: need to adapt with Ubuntu; this file is only present during run time
+# as a link to /run/systemd/resolve/resolv.conf
 echo " Clear the resolv.conf file"
-upload -<<END /etc/resolv.conf
+-upload -<<END /etc/resolv.conf
 END

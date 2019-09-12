@@ -1,10 +1,12 @@
 # Plan Script Description:
-# Remove host configuration before capture. Tested with with RHEL7.5, CentOS 7.5, 
-# SLE 15 and XenServer 7.1.
+# Create/populate an ImageStreamerCapture file certifying that the Golden Image 
+# has been created properly. Performs various cleanups: network file, hostname, 
+# fstab, /etc/hosts Tested with with RHEL7.5, CentOS 7.5, SLE 15 and XenServer 
+# 7.1, 7.6 and Ubuntu 19.04.
 
 # ##########################################
 # Generalize-host-before-CapturePS-FDZ
-# Version: 0.72
+# Version: 0.73
 ###########################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -73,6 +75,8 @@ rm-f /temp/ImageStreamer/capture_details
 # on RHEL type OS only.
 # If OS-Type=sles, /etc/sysconfig/network exists and is a directory.
 # Hence the following upload command will do nothing.
+# ToDo: Don't perform this action on SLES and Ubuntu to avoid
+# an error in the Golden Activity log file
 -upload -<<END /etc/sysconfig/network
 END
 

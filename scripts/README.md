@@ -1,4 +1,4 @@
-# Didactic-Linux-MultiDistro-Artifact-Bundle-V0.3-FDZ
+# Multi distro artifact bundles scripts
 
 ## Description
 
@@ -6,4 +6,7 @@ Scripts to maintain this project
 
 ## Content
 
-* `artifact.bash`: extracts Build Plans and Plan Scripts from the supplied Artifact Bundle and rename them with their meaningful names.
+* `ExtractArtifactSources.bash`: Extracts Build Plans and Plan Scripts from the supplied Artifact Bundle into the `src` dirctory and rename them with their meaningful names.
+
+* `ArtifactReadmeGenerator.bash`: Generates the `<ArtifactName>-README.md` file associated with each artifact bundle found in the artifact-bundle directory. It overwrites any already existing file. It must be ran after the `ExtractArtifactSources.bash` script.
+

@@ -39,8 +39,8 @@ END
 echo "\tEdit /etc/sysconfig/network file to set the HOSTNAME variable"
 
 # The following guestfish upload command populates the 
-# OS-Volume network file. In case of SUSE, we will get an error
-# because /etc/sysconfig/network is a directory already present. 
+# OS-Volume network file. In case of SUSE and Ubuntu, we will get an error
+# because /etc/sysconfig/network is a directory already present or does not exists. 
 # Hence we add the "-" to the upload command to avoid a
 # bad exit of guestfish.
 -upload -<<END /etc/sysconfig/network
@@ -113,6 +113,7 @@ fi
 echo "populating /etc/hosts with $ip_address (found after $i seconds..)."
 
 fqdn=@HostName@.@DomainName@
+# ToDo: Adapt the following to insert the comment after "ff02::2"
 alias=$(echo ${fqdn%%.*} )
 sed -i "/::1/a\\$ip_address $fqdn $alias" /etc/hosts
 sed -i "/::1/a\\#This file has been altered by Image Streamer." /etc/hosts
@@ -131,4 +132,4 @@ echo " Add the generated configure_hosts script to the RC file to run at boot ti
 
 # The following Image Streamer echo command appends
 # a line in the already present RC file.
-!echo "sh /temp/configure_hosts" >> ./RC-FILE
+!echo "/bin/bash /temp/configure_hosts" >> ./RC-FILE

@@ -3,7 +3,7 @@
 
 # ##########################################
 # Xen-ConfigureManagementNetworkNoBond-DeployPS-FDZ
-# Version: 0.1
+# Version: 0.2
 # ##########################################
 
 
@@ -92,9 +92,9 @@ upload -<<END /temp/network-configuration
 echo "Entering /temp/network-configuration script ..."
 
 if [[ "@ManagementNIC1.ipaddress@" =~ [0-9]*\.[0-9]*\.[0-9]*\.[0-9]* ]]; then
-	echo "sh /temp/xenetwork @ManagementNIC1.ipaddress@ @ManagementNIC1.gateway@ @ManagementNIC1.domain@ @ManagementNIC1.dns1@ @ManagementNIC1.dns2@ @ManagementNIC1.netmask@ @ManagementNIC1.mac@ " >> ./RC-FILE
+	echo "/bin/bash /temp/xenetwork @ManagementNIC1.ipaddress@ @ManagementNIC1.gateway@ @ManagementNIC1.domain@ @ManagementNIC1.dns1@ @ManagementNIC1.dns2@ @ManagementNIC1.netmask@ @ManagementNIC1.mac@ " >> ./RC-FILE
 else
-	echo "sh /temp/xenetwork 0 0 0 0 0 0 @ManagementNIC1.mac@ " >> ./RC-FILE
+	echo "/bin/bash /temp/xenetwork 0 0 0 0 0 0 @ManagementNIC1.mac@ " >> ./RC-FILE
 fi
 	
 #echo "rm -f /temp/xenetwork" >> ./RC-FILE

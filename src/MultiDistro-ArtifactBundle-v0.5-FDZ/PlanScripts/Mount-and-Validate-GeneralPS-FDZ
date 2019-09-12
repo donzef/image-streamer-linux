@@ -1,11 +1,11 @@
 # Plan Script Description:
-# Mount the root partition of the OS-Volume depending on the OS type found in the 
-# OS-Volume. Suitable for both Capture and Deploy OS Build Plans. Must be the 
-# first step of OS Build Plans. Tested with TBD
+# Mount the root partition of the OS-Volume depending on the OS type. Suitable 
+# for both Capture and Deploy OS Build Plans. Must be the first step of OS Build 
+# Plans. Tested with RHEL 7, CentOS 7, XenServer 7 and Ubuntu 19.04
 
 # ##########################################
 # Mount-and-Validate-GeneralPS-FDZ
-# Version: 0.58
+# Version: 0.60
 # ##########################################
 
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
@@ -54,7 +54,7 @@ list-filesystems | cat > ./list-fs
 # Testing File System type. XFS is not supported by libguestfs before version 12.el7_6.1.
 # The following should be rewritten and effectively against 
 # the version of libguestfs.
-!if $(grep -q -i xfs ./list-fs) ; then echo "XFS may not be supported with this version of ImageStreame. This Plan Script may fail abruptly very shortly" ; fi
+!if $(grep -q -i xfs ./list-fs) ; then echo "XFS may not be supported with this version of ImageStreamer. This Plan Script may fail abruptly very shortly" ; fi
 
 # Search for the OS device. The output of the 
 # inspect-os guestfish command goes out, into a file in the 
@@ -66,7 +66,7 @@ inspect-os | cat > ./OS-Dev
 # guestfish used by OV 4.1 is buggy; on certain OS-Volumes (i.e. CentOS 7) 
 # inspect-os returns several lines. 
 echo
-echo "List of OS devices found by guestfish (inspect-get-os):" 
+echo "List of all OS-devices found by guestfish (inspect-os):" 
 !cat ./OS-Dev
 echo
 
@@ -76,6 +76,25 @@ echo
 # as an OS. Hence we remove the vfat partition from the 
 # ./OS-Dev file:
 !if [ $(cat ./OS-Dev | wc -l) -eq 2 ] ;then VFAT_DEV=$(awk -F ":" '/vfat/ {print $1}' list-fs); awk -v vfat_dev=$VFAT_DEV '$0 != vfat_dev {print $0}' ./OS-Dev > ./OS-Dev2 ; mv ./OS-Dev2 ./OS-Dev ; fi
+
+echo "DEBUG: List of OS-Device after eventual cleanup"
+!cat ./OS-Dev
+echo
+
+# ToDo: Double check that the single left partition is different from vfat. 
+# This is needed because we noticed on Ubuntu 19.04 with ext4 (No LVM), the /dev/sda2
+# partition is not found as holding a valid OS filesystem.
+
+
+# Preparing tests on Image Streamer 5.0 accepting the inspect-get-osinfo command
+# Image Streamer does not implement this command but that's Ok since
+# prepended the "-" sign telling guestfish not to exit on failure.
+echo "Retrieving os info" 
+<!awk '{print "-inspect-get-osinfo", $NF}' ./OS-Dev
+echo "Retrieving os distro" 
+<!awk '{print "-inspect-get-distro", $NF}' ./OS-Dev
+echo
+
 
 # Create the mount command and execute it. The !awk 
 # command is executed by the Image Streamer. It prints
@@ -91,7 +110,7 @@ echo "Mount Command:"
 
 # The output of the following guestfish command
 # goes in the OS-Volume/Golden Image Activity log file.
-echo " Create temporary directory /temp/ImageStreamer"
+echo "Create temporary directory /temp/ImageStreamer"
 -mkdir-p /temp/ImageStreamer
 
 # Retrieve the OS type.
@@ -102,10 +121,17 @@ echo " Create temporary directory /temp/ImageStreamer"
 # The OS-Type is useful to distinguish Red Hat and SUSE specificity.
 # NOTE: It should be possible to use the guestfish inspect-get-distro
 # command to do the same.
-cat /etc/os-release | awk -F '"' '/^ID=/ {print $2}' > ./OS-Type
+cat /etc/os-release | awk -F= '/^ID=/ {print $NF}' > ./OS-Type
 
+# Remove surrounding " signs if any (Ubuntu encloses OS-Type with quotes
+# while others don't)
+!sed -i -e '1,$s/"//g' ./OS-Type
+
+echo
 !echo -n "OS-Type: "
 !cat ./OS-Type
+echo
+
 # Pull of the ./OS-Type from the Image Streamer
 # to the temporary directory:
 echo "Copy in the OS-Type file in the OS-Volume/Golden Image"
@@ -117,25 +143,28 @@ upload ./OS-Type /temp/OS-Type
 #
 # The output of the following echo command goes
 # in the OS-Volume Activity log file.
-<!awk '/rhel/ || /centos/ || /xen/ {print "echo Copy out rc.local"} ; /sles/ {print "echo Copy out after.local"}' ./OS-Type
+<!awk '/rhel/ || /centos/ || /xen/ || /ubuntu/ {print "echo Copy out rc.local"} ; /sles/ {print "echo Copy out after.local"}' ./OS-Type
 
 # Before the copy-out we touch it, just in case it does not exists. 
-<!awk '/rhel/ || /centos/ || /xen/ {print "touch /etc/rc.d/rc.local"} ; /sles/ {print "touch /etc/init.d/after.local"}' ./OS-Type
-<!awk '/rhel/ || /centos/ || /xen/ {print "download /etc/rc.d/rc.local ./RC-FILE"} ; /sles/ {print "download /etc/init.d/after.local ./RC-FILE"}' ./OS-Type
+# Ubuntu requires the x permission, so we chmod +x
+<!awk '/rhel/ || /centos/ || /xen/ {print "touch /etc/rc.d/rc.local"} ; /sles/ {print "touch /etc/init.d/after.local"} ; /ubuntu/ {print "touch /etc/rc.local" ; print "chmod 0755 /etc/rc.local"}' ./OS-Type
+
+# Copy out
+<!awk '/rhel/ || /centos/ || /xen/ {print "download /etc/rc.d/rc.local ./RC-FILE"} ; /sles/ {print "download /etc/init.d/after.local ./RC-FILE"} ; /ubuntu/ {print "download /etc/rc.local ./RC-FILE"}' ./OS-Type
 
 # copy-out to the Image Streamer a backup of the RC file
-echo " Copy out a backup of the RC file"
-<!awk '/rhel/ || /centos/ || /xen/ {print "download /etc/rc.d/rc.local ./RC-FILE.backup"} ; /sles/ {print "download /etc/init.d/after.local ./RC-FILE.backup"}' ./OS-Type
+echo "Copy out a backup of the RC file"
+<!awk '/rhel/ || /centos/ || /xen/ {print "download /etc/rc.d/rc.local ./RC-FILE.backup"} ; /sles/ {print "download /etc/init.d/after.local ./RC-FILE.backup"} ; /ubuntu/ {print "download /etc/rc.local ./RC-FILE.backup"}' ./OS-Type
 
-#Setup RC file to run scripts at next boot time.
+# Setup RC file to run scripts at next boot time.
 # The following echo command is executed by the Image Streamer.
 # Its output is appended to the just copied-out rc.local file.
-!echo "#The following commands have been added by the Image Streamer" >> ./RC-FILE
+!echo "# The following commands have been added by the Image Streamer" >> ./RC-FILE
 
 echo "Make sure RC file begins with !#/bin/bash" 
 !sed -i '1s/#!\/bin\/bash//' ./RC-FILE
 !sed -i '1i #!/bin/bash' ./RC-FILE
 
-echo "print out the content the RC file for debug purposes." 
+echo " Print out the content the RC file for debug purposes." 
 !cat ./RC-FILE
 echo

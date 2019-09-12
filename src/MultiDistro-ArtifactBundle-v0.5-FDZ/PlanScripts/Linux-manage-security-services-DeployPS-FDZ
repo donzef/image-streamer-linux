@@ -1,10 +1,10 @@
 # Plan Script Description:
 # Enables or Disables security services. Successfully tested on RHEL 7.5, CentOS 
-# 7.5. ToDo: Support of SLE 15. Investigate adaption to XenServer
+# 7.5. ToDo: Support of SLE 15. Investigate adaption to XenServer and Ubuntu
 
 # #################################################
 # Linux-manage-security-services-DeployPS-FDZ
-# Version: 0.44
+# Version: 0.46
 # #################################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -24,8 +24,9 @@ echo "======================================="
 echo "Linux-manage-security-services-DeployPS-FDZ"
 echo "======================================="
 
-# Copy-out the OS-Volume /etc/selinux/config into the Image Streamer:
-download /etc/selinux/config ./selinux_config
+# Copy-out the OS-Volume /etc/selinux/config into the Image Streamer. Don't exit
+# if this file does not exists (the default on Ubuntu)
+-download /etc/selinux/config ./selinux_config
 
 # The following echo command is executed by the guestfish shell.
 # Its output is present in the OS-Volume Activity log file.
@@ -45,13 +46,15 @@ download /temp/ImageStreamer/Enable_Selinux ./Enable_Selinux
 # the SELINUX configuration file.
 !source ./Enable_Selinux
 # Copy-in the new SELINUX config file into the OS-Volume.
-upload ./selinux_config /etc/selinux/config
+# ToDo: Don't copy it if it was not existing (i.e. Ubuntu)
+-upload ./selinux_config /etc/selinux/config
 
 # The following echo command will be performed by the Image Streamer. 
 # Its output will be written in the OS Volume Activity/log file.
 echo "\tPopulate the RC file to disable and stop firewalld service during next boot"
 
 # ToDo: Add some flexibility to the firewalld service: Enable and start...
+# ToDo: Adapt for Ubuntu and its ufw (ufw disable)
 
 # The following 3 echo commands will be performed by the Image Streamer.
 # Their output will be appended to the RC file of the image Streamer.
@@ -63,7 +66,8 @@ echo "\tPopulate the RC file to disable and stop firewalld service during next b
 # Its output is present in the OS-Volume Activity log file.
 echo "\tPopulate the RC file to enable and start or disable and stop the sshd.service during next reboot"
 
-# Create a bash script in the OS-Volume:
+# Create a bash script in the OS-Volume to manage the ssh service
+# ToDo: adapt if ssh server has not been installed.
 upload -<<END /temp/ImageStreamer/ssh_service
 #! /bin/bash
 echo -e "\tEntering ssh_service"
@@ -111,7 +115,7 @@ echo "\tPopulate the RC-FILE to fix iSCSI initiator issue during next boot."
 # The following 4 echo commands are performed by the Image Streamer shell.
 # Their output is appended to the RC file already present in the Image Streamer.
 !echo 'echo "Fix iSCSI initiator"' >> ./RC-FILE
-!echo "sh /temp/set_iscsi_initiator" >> ./RC-FILE
+!echo "/bin/bash /temp/set_iscsi_initiator" >> ./RC-FILE
 !echo "service iscsid restart" >> ./RC-FILE
 !echo "sleep 2" >> ./RC-FILE
 # ToDo: Use systemctl to manage the iscsid service. Check whether the service is really active!

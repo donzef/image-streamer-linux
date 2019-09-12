@@ -12,7 +12,7 @@
 
 # #############################################
 # Linux-configure-multiple-NICs-DeployPS-FDZ
-# Version 0.82
+# Version 0.85
 # #############################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -91,13 +91,17 @@ case $OS_Type in
  NET_DIR="network"
  RC_FILE="after.local" 
  ;;
+ ubuntu)
+ NET_DIR="TBD"
+ RC_FILE="rc.local"
+ ;;
  *)
  echo "OS Type not supported. Exiting. "
  exit 1
  ;;
 esac
 
-
+# ToDo: The following should be re-written with a case...esac
 # Check the presence of Netwok Manager only on RHEL and CentOS:
 if [ "$OS_Type" == "rhel" -o "$OS_Type" == "centos" ] ; then 
  echo -e "\tChecking presence of NetworkManager..."
@@ -111,10 +115,14 @@ if [ "$OS_Type" == "rhel" -o "$OS_Type" == "centos" ] ; then
  exit 3
  fi
 fi
+if [ "$OS_Type" == "ubuntu" ] ; then
+ echo "Ubuntu: TBD"
+fi
+
 
 
 echo -e "\tCheck the matching interface name for $net_mac."
-interfaces=`ls /sys/class/net/`
+interfaces=$(ls /sys/class/net/)
 echo 'echo $interfaces'
 echo $interfaces
 
@@ -210,6 +218,9 @@ CONF
 
 fi
  ;;
+ubuntu)
+ echo "Configuring Ubuntu network: TBD"
+ ;;
 *)
  echo "OS Type $OS_Type not supported. Exiting"
  exit 1
@@ -229,7 +240,7 @@ echo "\tThe number of NICs to configure is automatically calculated using the Ne
 # TODO: Offer the possibility to configure less NICs than present in the profile.
 
 # The following command creates a bash script in the OS-Volume. 
-# This script will be copied-out to the Image Streamer and executed their.
+# This script will be copied-out to the Image Streamer and executed there.
 # Its goal is to generate all the necessary entries in the RC-FILE for each NIC 
 # that has to be configured.
 # NOTE: The Custom Attributes are expanded during the creation of the script.
@@ -239,7 +250,7 @@ upload -<<END /temp/ImageStreamer/network-configuration
 # Retrieve OS-Type and set OS-Type dependent variables.
 OS_Type=$(cat OS-Type)
 case $OS_Type in
- rhel|centos)
+ rhel|centos|ubuntu)
  NET_DIR="network-scripts"
  RC_FILE="rc.local" 
  ;;
@@ -247,9 +258,14 @@ case $OS_Type in
  NET_DIR="network"
  RC_FILE="after.local" 
  ;;
+ ubuntu)
+ echo " Ubuntu network configuration: TBD"
+ RC_FILE="rc.local" 
+ NET_DIR="TBD" 
+ ;;
  *)
- echo "OS Type not supported. Exiting. "
- exit 1
+ echo " OS Type: $OS_Type not supported yet. Exiting. "
+ exit 2
  ;;
 esac
 
@@ -270,7 +286,7 @@ done
 
 if [ $NICs_count -eq 0 ]; then
  echo -e "\tNo NIC to configure. Strange! Exiting."
- echo "rm -f /temp/configure" >> ./RC-FILE
+ echo "rm -f /temp/NIC-configure" >> ./RC-FILE
  exit 0
 fi
 
@@ -278,30 +294,32 @@ for i in `seq 1 $NICs_count`
 do
  if [ $i -eq 1 ];then
  if [[ "@NIC1.ipaddress@" =~ [0-9]*\.[0-9]*\.[0-9]*\.[0-9]* ]]; then
- echo "sh /temp/NIC-configure @NIC1.mac@ @NIC1.vlanid@ @NIC1.ipaddress@ @NIC1.gateway@ @NIC1.domain@ @NIC1.dns1@ @NIC1.dns2@ @NIC1.netmask@" >> ./RC-FILE
+ echo "/bin/bash /temp/NIC-configure @NIC1.mac@ @NIC1.vlanid@ @NIC1.ipaddress@ @NIC1.gateway@ @NIC1.domain@ @NIC1.dns1@ @NIC1.dns2@ @NIC1.netmask@" >> ./RC-FILE
  else
- echo "sh /temp/NIC-configure @NIC1.mac@ @NIC1.vlanid@" >> ./RC-FILE
+ echo "/bin/bash /temp/NIC-configure @NIC1.mac@ @NIC1.vlanid@" >> ./RC-FILE
  fi
  elif [ $i -eq 2 ];then
  if [[ "@NIC2.ipaddress@" =~ [0-9]*\.[0-9]*\.[0-9]*\.[0-9]* ]]; then
- echo "sh /temp/NIC-configure @NIC2.mac@ @NIC2.vlanid@ @NIC2.ipaddress@ @NIC2.gateway@ @NIC2.domain@ @NIC2.dns1@ @NIC2.dns2@ @NIC2.netmask@" >> ./RC-FILE
+ echo "/bin/bash /temp/NIC-configure @NIC2.mac@ @NIC2.vlanid@ @NIC2.ipaddress@ @NIC2.gateway@ @NIC2.domain@ @NIC2.dns1@ @NIC2.dns2@ @NIC2.netmask@" >> ./RC-FILE
  else
- echo "sh /temp/NIC-configure @NIC2.mac@ @NIC2.vlanid@" >> ./RC-FILE
+ echo "/bin/bash /temp/NIC-configure @NIC2.mac@ @NIC2.vlanid@" >> ./RC-FILE
  fi
  elif [ $i -eq 3 ];then
  if [[ "@NIC3.ipaddress@" =~ [0-9]*\.[0-9]*\.[0-9]*\.[0-9]* ]]; then
- echo "sh /temp/NIC-configure @NIC3.mac@ @NIC3.vlanid@ @NIC3.ipaddress@ @NIC3.gateway@ @NIC3.domain@ @NIC3.dns1@ @NIC3.dns2@ @NIC3.netmask@" >> ./RC-FILE
+ echo "/bin/bash /temp/NIC-configure @NIC3.mac@ @NIC3.vlanid@ @NIC3.ipaddress@ @NIC3.gateway@ @NIC3.domain@ @NIC3.dns1@ @NIC3.dns2@ @NIC3.netmask@" >> ./RC-FILE
  else
- echo "sh /temp/NIC-configure @NIC3.mac@ @NIC3.vlanid@" >> ./RC-FILE
+ echo "/bin/bash /temp/NIC-configure @NIC3.mac@ @NIC3.vlanid@" >> ./RC-FILE
  fi
  elif [ $i -eq 4 ];then
  if [[ "@NIC4.ipaddress@" =~ [0-9]*\.[0-9]*\.[0-9]*\.[0-9]* ]]; then
- echo "sh /temp/NIC-configure @NIC4.mac@ @NIC4.vlanid@ @NIC4.ipaddress@ @NIC4.gateway@ @NIC4.domain@ @NIC4.dns1@ @NIC4.dns2@ @NIC4.netmask@" >> ./RC-FILE
+ echo "/bin/bash /temp/NIC-configure @NIC4.mac@ @NIC4.vlanid@ @NIC4.ipaddress@ @NIC4.gateway@ @NIC4.domain@ @NIC4.dns1@ @NIC4.dns2@ @NIC4.netmask@" >> ./RC-FILE
  else
- echo "sh /temp/NIC-configure @NIC4.mac@ @NIC4.vlanid@" >> ./RC-FILE
+ echo "/bin/bash /temp/NIC-configure @NIC4.mac@ @NIC4.vlanid@" >> ./RC-FILE
  fi
  fi
 done
+
+# ToDo: adapt the following to the different Linux flavors (i.e. Ubuntu)
 echo "systemctl restart network " >> ./RC-FILE
 echo "rm -f /temp/NIC-configure" >> ./RC-FILE
 exit 0

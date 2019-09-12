@@ -1,10 +1,11 @@
 # Plan Script Description:
 # Set root password and create user accounts during the deployment process. 
-# Tested successfully with RHEL 7.5, CentOS 7.5 and SLE 15.
+# Tested successfully with RHEL 7, CentOS 7 and SLE 15 and Ubuntu 19.04. ToDo: 
+# add support of XenServer
 
 # ############################################
 # Linux-configure-users-DeployPS-FDZ
-# Version: 0.42
+# Version: 0.44
 #############################################
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
 #
@@ -39,12 +40,9 @@ echo "Entering ${0}..."
 OS_Type=$(cat /temp/OS-Type)
 
 case $OS_Type in
- rhel|centos)
+ rhel|centos|sles|ubuntu)
  # ToDo: it may be possible to use chpasswd as in SLES...
- echo "@NewRootPassword@" | passwd root --stdin
- ;;
- sles)
- echo "root:@NewRootPassword@" | chpasswd
+ echo "root:@NewRootPassword@" | chpasswd 2>/dev/null
  ;;
  *)
  echo "OS Type not supported. Exiting. "
@@ -52,9 +50,9 @@ case $OS_Type in
  ;;
 esac
 echo "Exiting ${0}..."
-
-# The following command delete the current script.
 unlink $0
+
+
 END
 
 # The output of the following echo commands goes
@@ -77,8 +75,25 @@ OS_Type=$(cat /temp/OS-Type)
 
 echo "Add comment in /etc/{group,passwd}"
 # Add comments in passwd and group files to delimit the start of Image Streamer modifications
-[[ "$OS_Type" == "rhel" || "$OS_Type" == "centos" ]] && sed -i -e '$a\#START of Image Streamer modifications' /etc/group
-sed -i -e '$a\#START of Image Streamer modifications' /etc/passwd
+# ToDo: Would be nicer to add this comment only if at least one user has been added!
+case $OS_Type in
+	rhel|centos|ubuntu)
+		sed -i -e '$a\#START of Image Streamer modifications' /etc/group
+		sed -i -e '$a\#START of Image Streamer modifications' /etc/passwd
+		;;
+	sles)
+		# It seems that SLES, by default, does not create one group per new user
+		 sed -i -e '$a\#START of Image Streamer modifications' /etc/passwd
+		;;
+	xen*)
+		echo "ToDo: need to adapt with Xen or not? Exiting..."
+		exit 0
+		;;
+	*)
+		echo "OS Type: $OS_Type not supported. Exiting"
+		exit 1
+		;;
+esac
 
 # The following variable contains the list of the 
 # new users to create, separated by a comma (,) or a semi-colon (;).
@@ -86,34 +101,29 @@ users_string="@NewUsers@"
 
 #Users will be added with the same password. On first login users will have to change their password.
 password="@NewUsersPassword@"
+
 IFS=',; ' read -r -a array <<< "$users_string"
 for user in "${array[@]}"
 do
+	echo "Processing $user"
 	if [ $(id -u) -eq 0 ]; then
 			egrep "$user" /etc/passwd >/dev/null
 			if [ $? -eq 0 ]; then
 					echo "Warning: $user exists!"
 			else
- case $OS_Type in 
- rhel|centos)
-					 useradd -m $user
-					 chage -d 0 $user
-					 # ToDo: it may be possible to use chpasswd as in SLES...
- # echo $password | passwd $user --stdin
- echo "$user:$password" | chpasswd 
-					 [ $? -eq 0 ] && echo "User $user has been added to system!" || echo "Failed to add a user!"
- ;;
- sles)
- useradd -m $user
- echo "$user:$password" | chpasswd
- [ $? -eq 0 ] && echo "User $user has been added to system!" || echo "Failed to add a user!"
- ;;
- *)
- echo "OS Type: $OS_TYPE not supported. Exiting."
- exit 1
- ;;
- esac
 
+				case $OS_Type in 
+				rhel|centos|ubuntu|sles)
+	 				useradd -m $user
+	 				echo "$user:$password" | chpasswd 2>/dev/null
+	 				chage -d 0 $user
+	 				[ $? -eq 0 ] && echo "User $user has been added to system!" || echo "Failed to add a user!"
+ 					;;
+ 				*)
+ 					echo "OS Type: $OS_Type not supported. Exiting."
+ 					exit 1
+	 				;;
+ 				esac
 			fi
 	else
 			echo "Error: Unable to add $user"
@@ -122,15 +132,33 @@ do
 done
 
 # Add comments in passwd file to delimit the end of Image Streamer modifications:
-sed -i -e '$a\#END of Image Streamer modifications' /etc/passwd
-[[ "$OS_Type" == "rhel" || "$OS_Type" == "centos" ]] && sed -i -e '$a\#END of Image Streamer modifications' /etc/group
+# ToDo: Would be nicer to add this comment only if at least one user has been added!
+case $OS_Type in
+	rhel|centos|ubuntu)
+		sed -i -e '$a\#END of Image Streamer modifications' /etc/group
+		sed -i -e '$a\#END of Image Streamer modifications' /etc/passwd
+		;;
+	sles)
+		 sed -i -e '$a\#END of Image Streamer modifications' /etc/passwd
+		;;
+	xen*)
+		echo "ToDo: need to adapt with Xen or not? Exiting..."
+		exit 0
+		;;
+	*)
+		echo "OS Type: $OS_Type not supported. Exiting"
+		exit 1
+		;;
+esac
+
 
 # The outuput of the following shell command goes
 # in the OS log file. Typically /var/log/messages.
 echo "Exiting ${0}..."
 
 # Delete this script from the OS-Volume temporary directory.
-unlink $0
+#unlink $0
+
 END
 
 # The output of the following echo command goes in 
@@ -139,5 +167,5 @@ echo "\tAdd change_root_passwd and add_users scripts to RC file to run at boot t
 
 # The following Image Streamer commands append lines
 # in the RC file already present in the Image Streamer.
-!echo "sh /temp/change_root_passwd" >> ./RC-FILE
-!echo "sh /temp/add_users" >> ./RC-FILE
+!echo "/bin/bash /temp/change_root_passwd" >> ./RC-FILE
+!echo "/bin/bash /temp/add_users" >> ./RC-FILE

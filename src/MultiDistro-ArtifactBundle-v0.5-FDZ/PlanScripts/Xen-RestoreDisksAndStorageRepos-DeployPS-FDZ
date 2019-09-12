@@ -5,7 +5,7 @@
 
 # ##########################################
 # Xen-RestoreDisksAndStorageRepo-DeployPS-FDZ
-# Version: 0.4
+# Version: 0.5
 # ##########################################
 
 # (c) Copyright 2017 Hewlett Packard Enterprise Development LP
@@ -164,6 +164,6 @@ exit 0
 END
 
 echo " Populate the ./RC-FILE with the launch of the RestoreDisksAndStorageRepos script during first reboot"
-!echo "sh /temp/RestoreDisksAndStorageRepos" >> ./RC-FILE
+!echo "/bin/bash /temp/RestoreDisksAndStorageRepos" >> ./RC-FILE
 
 echo " Exiting Xen-RestoreDisksAndStorageRepo-DeployPS-FDZ"
