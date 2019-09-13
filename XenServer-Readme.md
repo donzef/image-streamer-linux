@@ -17,6 +17,7 @@
 
     /opt/xensource/installer/init --use_ibft
     ```
+
     where `iqn.yyyy-mm.com.hpe:oneview-string` is the iSCSI initiator name found in the **Server Profile**.
 
 * Answer `Yes` to the "Attach to disks specified in iBFT?" question
