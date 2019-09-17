@@ -6,4 +6,4 @@ Artifact sources located in their respective directory. The `BuildPlans` sub-dir
 
 ## Content
 
-* `ExtractArtifactSources.bash`: extracts Build Plans and Plan Scripts from the supplied Artifact Bundle into the `src` dirctory and rename them with their meaningful names. Prepend the Description paragrah in the source document.
+* One directory per artifact bundle.

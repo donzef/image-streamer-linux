@@ -9,7 +9,7 @@
 # Typical invocation:
 #     ./artifact-sources.bash ../artifacts-bundles/Didactic-Linux-MultiDistro-Artifact-Bundle-V0.3-FDZ.zip
 
-# Version: 0.34
+# Version: 0.35
 
 # Check argument(s)
 NUM_ARG=1
@@ -73,7 +73,8 @@ BP_LIST=$(ls *_buildplan.json 2>/dev/null)
 
 # Move the Manifest file, containing the artifact description
 # into a README.md filename
-mv MANIFEST.MF ${ARTIFACT_BASENAME}/README.md
+sed -e 's/$/\n/' MANIFEST.MF > ${ARTIFACT_BASENAME}/README.md
+rm -f MANIFEST.MF > /dev/null 2>&1
 
 # Extract script sources from the .json files
 for f in $PS_LIST ; do
