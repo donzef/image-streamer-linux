@@ -4,7 +4,7 @@
 
 The installation disk size for XenServer 7 and 8 must be between 46 GB (or 47104 MB) and 50 GB (51200 MB). [Citrix](https://docs.citrix.com/en-us/xenserver/7-1/install/partition-layout.html) requires 46 GB to hold all the partitions and 50 GB corresponds to the maximum volume that Image Streamer can handle. Most of this disk will bot be used because Image Streamer uses **thin storage**. Only about .5 GB will be provisioned. Moreover the partition layout strictly consumes 42.5 GB, leaving at least  4.5 GB free space for a small local Storage Repository (SR) that can be created during the initial installation process and that can be used during upgrades. Note that Plan Scripts in this GitHub repository is no able to cope with Storage Repositories spanning several disks.
 
-By default the XenServer installer does not load iSCI drivers required to access the OS-Volume presented by the Image Streamer. Hence manual operations must occur before launching the installer and then at first reboot.
+By default the XenServer installer does not load iSCSI drivers required to access the OS-Volume presented by the Image Streamer. Hence manual operations must occur before launching the installer and then at first reboot.
 
 ## Pre-requisite
 
