@@ -9,7 +9,7 @@
 # Typical invocation:
 #     ./artifact-sources.bash ../artifacts-bundles/Didactic-Linux-MultiDistro-Artifact-Bundle-V0.3-FDZ.zip
 
-# Version: 0.35
+# Version: 0.36
 
 # Check argument(s)
 NUM_ARG=1
@@ -65,9 +65,13 @@ mkdir -p ${BuildPlan_DIR}  > /dev/null 2>&1
 rm *.json SHA256SUM.sha256sum > /dev/null 2>&1
 
 # unzip locally abruptly (overwrite existing files).
-unzip -o ../artifact-bundles/$ARTIFACT_BASENAME -d .
+# ToDo: In case unzip fails, we should 
+# print a meaningful message, remove ${SRC_DIR} created earlier
+# and only then exit
+$UNZIP -o ../artifact-bundles/$ARTIFACT_BASENAME -d . || \
+	exit 1
 
-# 
+# Create Plan Scripts and Build Plans lists
 PS_LIST=$(ls *_planscript.json 2>/dev/null)
 BP_LIST=$(ls *_buildplan.json 2>/dev/null)
 
