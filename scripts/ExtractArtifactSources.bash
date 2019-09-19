@@ -9,7 +9,7 @@
 # Typical invocation:
 #     ./artifact-sources.bash ../artifacts-bundles/Didactic-Linux-MultiDistro-Artifact-Bundle-V0.3-FDZ.zip
 
-# Version: 0.36
+# Version: 0.37
 
 # Check argument(s)
 NUM_ARG=1
@@ -87,10 +87,13 @@ for f in $PS_LIST ; do
     PS_FILENAME=$($JQ  -r '.name' $f | tr ' ' "-")
     PS_ID=$($JQ  -r '.id' $f)
 
-    # Insert PlanScript Description at the beginning of PS 
+    # Insert PlanScript type and description at the beginning of PS sources
     # with lines starting with "#"
+    PS_TYPE=$($JQ  -r '.planType' $f)
     PS_DESCRIPTION=$($JQ  -r '.description' $f)
-    echo "# Plan Script Description:" > ${PlanScript_DIR}/${PS_FILENAME}
+    echo "# Plan Script Type: ${PS_TYPE}" > ${PlanScript_DIR}/${PS_FILENAME}
+    echo "" >> ${PlanScript_DIR}/${PS_FILENAME}
+    echo "# Plan Script Description:" >> ${PlanScript_DIR}/${PS_FILENAME}
     echo -e $PS_DESCRIPTION | fold -s | sed '1,$s/^/# /' >> ${PlanScript_DIR}/${PS_FILENAME}
     echo >> ${PlanScript_DIR}/${PS_FILENAME}
 
