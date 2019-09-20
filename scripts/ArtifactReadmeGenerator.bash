@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Version 0.2
+# Version 0.3
 
 # This script generates the <ArtifactName>-README.md file 
 # associated with each artifact bundle found in the 
@@ -41,41 +41,77 @@ if [ -d $ARTIFACT_DIR ] ; then
 	fi
 fi
 
-# Verify artifact sources are present or not
+# Verify artifact sources are present
 for artifact in $ARTIFACT_LIST ; do
-	echo "Processing $artifact"
+	echo "Checking ${artifact}"
 	# Verify that the sources have been extracted
-	if [ ! -d ${ARTIFACT_SRC}/$artifact ] ; then
-		echo "Could not find artifact sources for $artifact"
-		echo "Make sure to extract sources before running $MyName" 
+	if [ ! -d ${ARTIFACT_SRC}/${artifact} ] ; then
+		echo -e "\tCould not find artifact sources for $artifact"
+		echo -e "\tMake sure to extract sources before running $MyName" 
 	else
-	NEW_ARTIFACT_LIST="$NEW_ARTIFACT_LIST $artifact"
+	NEW_ARTIFACT_LIST="${NEW_ARTIFACT_LIST} ${artifact}"
 	fi
 done
 echo
 
-for artifact in $NEW_ARTIFACT_LIST ; do
-	cd ${ARTIFACT_SRC}/$artifact
-	ARTIFACT_README="../${artifact}-README.md"
-	echo -e "# Artifact content\n\n## Plan scripts content\n\nName | Description\n-|-" \
-		> $ARTIFACT_README
+if  [ -z $NEW_ARTIFACT_LIST ] ; then
+	echo -e "\nArtifact list is empty. Exiting..."
+	exit 1
+fi
 
-	# ToDo: verify the PlanScripts directory exits
+for artifact in ${NEW_ARTIFACT_LIST} ; do
+	echo "Processing ${artifact}"
+	cd ${ARTIFACT_SRC}/${artifact}
+	ARTIFACT_README="../${artifact}/README.md"
+
+
+	# Verify BuildPlans directory exists
+	# ToDo: Verify the following works when Build Plan list is empty
+	if [ ! -d BuildPlans ] ; then
+		echo -e "\tCannot find the ${artifact}/BuildPlans directory"
+		echo -e "\tMake sure sources of ${artifact} have been correctly extracted."
+		echo -e "\tExiting"
+		exit 2
+	fi
+
+	# Processing Build Plans
+	BUILDPLAN_LIST="$(ls BuildPlans)"
+	echo "Build Plans"
+	cd BuildPlans
+	for bp in ${BUILDPLAN_LIST} ; do
+		echo -e "\tProcessing $bp"
+	done
+	echo
+	echo -e "## Build Plans description\n\nName | Type | Description | Steps\n-|-|-|-" \
+		>> ../${ARTIFACT_README}
+	echo -e "TBD | TBD | TBD | TBD\n" >> ../${ARTIFACT_README}
+
+	cd ..
+	echo -e "## Plan scripts description\n\nName | Description\n-|-" \
+		>> ${ARTIFACT_README}
+
+	# Verify that the PlanScripts and the BuildPlans directory exists
+	if [ ! -d PlanScripts ] ; then
+		echo -e "\tCannot find the ${artifact}/PlanScripts directory"
+		echo -e "\tMake sure sources of ${artifact} have been correctly extracted."
+		echo -e "\tExiting"
+		exit 2
+	fi
+
 	PLANSCRIPT_LIST="$(ls PlanScripts)"
+	echo "Plan Scripts"
 	cd PlanScripts
 	for ps in $PLANSCRIPT_LIST ; do
-		echo "Processing $ps"
+		echo -e "\tProcessing $ps"
 		awk -F'#' 'BEGIN {Descr=""} \
 			!/Description:/ {Descr=Descr $NF} \
 			/############/ {exit} \
 			END {print FILENAME, "|", Descr}' $ps >> ../$ARTIFACT_README
 	done
-
+	echo
 done
 
 
-echo -e "\n## Build plans content\n" >> ../$ARTIFACT_README
-echo "TBD" >> ../$ARTIFACT_README
 # Work in progress
 
 
