@@ -9,7 +9,7 @@
 # Typical invocation:
 #     ./artifact-sources.bash ../artifacts-bundles/Didactic-Linux-MultiDistro-Artifact-Bundle-V0.3-FDZ.zip
 
-# Version: 0.38
+# Version: 0.39
 
 # Check argument(s)
 NUM_ARG=1
@@ -114,7 +114,8 @@ for f in $BP_LIST ; do
     BP_ID=$($JQ  -r '.buildPlanid' $f)
     BP_DESCRIPTION=$($JQ  '.description' $f | tr --delete '"' )
     BP_TYPE=$($JQ '.oeBuildPlanType' $f  | tr --delete '"')
-    BP_STEPS=$($JQ '.buildStep[] | .planScriptName' $f | tr --delete '"')
+    BP_STEPS=$($JQ '.buildStep[]' $f | tr --delete '",' | \
+	 awk -F: '/serialNumber/ {printf $NF}; /planScriptName/ {print $NF}')
     BP_CUSTOM_ATTRIBUTES=$($JQ '.customAttributes' $f | tr --delete '[]')
     
     cat > ${BuildPlan_DIR}/${BP_FILENAME} << __EOF__

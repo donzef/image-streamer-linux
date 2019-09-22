@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Version 0.3
+# Version 0.4
 
 # This script generates the <ArtifactName>-README.md file 
 # associated with each artifact bundle found in the 
@@ -78,13 +78,18 @@ for artifact in ${NEW_ARTIFACT_LIST} ; do
 	BUILDPLAN_LIST="$(ls BuildPlans)"
 	echo "Build Plans"
 	cd BuildPlans
-	for bp in ${BUILDPLAN_LIST} ; do
-		echo -e "\tProcessing $bp"
-	done
-	echo
 	echo -e "## Build Plans description\n\nName | Type | Description | Steps\n-|-|-|-" \
 		>> ../${ARTIFACT_README}
-	echo -e "TBD | TBD | TBD | TBD\n" >> ../${ARTIFACT_README}
+	for bp in ${BUILDPLAN_LIST} ; do
+		echo -e "\tProcessing $bp"
+		awk -F: '/Name/ {N=$NF}
+			/Type/ {T=$NF}
+			/Description/ {D=$NF}
+			/^ [1-9]/ { S=S $0 }
+			END {print N, "|", T, "|", D, "|", S}' $bp >> ../${ARTIFACT_README}
+		echo >> ../${ARTIFACT_README}
+	done
+	echo
 
 	cd ..
 	echo -e "## Plan scripts description\n\nName | Description\n-|-" \
@@ -110,9 +115,5 @@ for artifact in ${NEW_ARTIFACT_LIST} ; do
 	done
 	echo
 done
-
-
-# Work in progress
-
 
 
