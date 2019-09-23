@@ -1,3 +1,5 @@
+# Plan Script Type: deploy
+
 # Plan Script Description:
 # Enables or Disables security services. Successfully tested on RHEL 7.5, CentOS 
 # 7.5. ToDo: Support of SLE 15. Investigate adaption to XenServer and Ubuntu

@@ -1,3 +1,5 @@
+# Plan Script Type: deploy
+
 # Plan Script Description:
 # Restore the DvD Drives, Removable storage and Local storage repositories that 
 # may have been removed during the Golden Image creation process. Suitable for 

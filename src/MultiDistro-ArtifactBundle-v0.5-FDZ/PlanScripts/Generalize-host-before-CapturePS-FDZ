@@ -1,3 +1,5 @@
+# Plan Script Type: capture
+
 # Plan Script Description:
 # Create/populate an ImageStreamerCapture file certifying that the Golden Image 
 # has been created properly. Performs various cleanups: network file, hostname, 

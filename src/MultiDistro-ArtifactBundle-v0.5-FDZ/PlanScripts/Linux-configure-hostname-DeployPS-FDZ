@@ -1,3 +1,5 @@
+# Plan Script Type: deploy
+
 # Plan Script Description:
 # Configure hostname and populate the network directory with ifcfg-* files and 
 # /etc/hosts. NOTE: This script MUST be executed after the 

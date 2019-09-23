@@ -1,3 +1,5 @@
+# Plan Script Type: deploy
+
 # Plan Script Description:
 # Set root password and create user accounts during the deployment process. 
 # Tested successfully with RHEL 7, CentOS 7 and SLE 15 and Ubuntu 19.04. ToDo: 

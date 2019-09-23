@@ -1,3 +1,5 @@
+# Plan Script Type: capture
+
 # Plan Script Description:
 # Remove network settings depending on the OS-Type before golden image capture. 
 # Tested with RHEL 7.5, CentOS 7.5, SLE 15, XenServer 7.1, 7.6. Although Ubuntu 

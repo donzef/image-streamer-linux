@@ -7,12 +7,12 @@ ID  : 8a4745bf-1e3d-4026-9a06-e6cc26a93b47
 Description: Capture Golden Images. Tested with CentOS 7.6 and XenServer 7.6
 
 Steps:
-Mount-and-Validate-GeneralPS-FDZ
-Generalize-host-before-CapturePS-FDZ
-Generalize-network-before-CapturePS-FDZ
-Generalize-users-before-CapturePS-FDZ
-Clean-up-after-CapturePS-FDZ
-Unmount-GeneralPS-FDZ
+ 1- Mount-and-Validate-GeneralPS-FDZ
+ 2- Generalize-host-before-CapturePS-FDZ
+ 3- Generalize-network-before-CapturePS-FDZ
+ 4- Generalize-users-before-CapturePS-FDZ
+ 5- Clean-up-after-CapturePS-FDZ
+ 6- Unmount-GeneralPS-FDZ
 
 Custom Attributes:
 

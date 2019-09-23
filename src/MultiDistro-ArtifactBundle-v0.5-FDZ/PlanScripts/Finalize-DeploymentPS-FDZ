@@ -1,3 +1,5 @@
+# Plan Script Type: deploy
+
 # Plan Script Description:
 # Mainly finalize the preparation of the RC-FILE to be executed during the next 
 # reboot of the OS-Volume.

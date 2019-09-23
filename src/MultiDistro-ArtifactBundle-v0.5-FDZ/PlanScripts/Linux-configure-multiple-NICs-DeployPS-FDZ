@@ -1,3 +1,5 @@
+# Plan Script Type: deploy
+
 # Plan Script Description:
 # Configure all the NICs corresponding to the Connections defined in the OneView 
 # Profile. The number of NICs to configure corresponds to the number of connected 

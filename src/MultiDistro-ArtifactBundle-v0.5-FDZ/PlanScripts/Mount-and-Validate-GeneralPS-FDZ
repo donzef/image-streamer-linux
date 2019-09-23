@@ -1,3 +1,5 @@
+# Plan Script Type: general
+
 # Plan Script Description:
 # Mount the root partition of the OS-Volume depending on the OS type. Suitable 
 # for both Capture and Deploy OS Build Plans. Must be the first step of OS Build 

@@ -1,3 +1,5 @@
+# Plan Script Type: capture
+
 # Plan Script Description:
 # Remove host configuration before capture. Tested with with RHEL7.5, CentOS 7.5, 
 # SLE 15 and XenServer 7.1.

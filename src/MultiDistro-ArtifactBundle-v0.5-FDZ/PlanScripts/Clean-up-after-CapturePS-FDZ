@@ -1,3 +1,5 @@
+# Plan Script Type: capture
+
 # Plan Script Description:
 # Cleans up temporary directories or files created in the during the Capture 
 # process.

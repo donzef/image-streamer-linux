@@ -1,3 +1,5 @@
+# Plan Script Type: general
+
 # Plan Script Description:
 # Unmounts all the guestfish mounted partition(s). It can be used in both Capture 
 # and Deploy OS Build Plans

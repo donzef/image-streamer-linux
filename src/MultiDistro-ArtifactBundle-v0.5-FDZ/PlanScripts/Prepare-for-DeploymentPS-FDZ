@@ -1,3 +1,5 @@
+# Plan Script Type: deploy
+
 # Plan Script Description:
 # Validate the Golden Image/OS-Volume against invalid captures and prepare the RC 
 # file to be modified by the deployment Plan Scripts. When needed, copy the 

@@ -1,3 +1,5 @@
+# Plan Script Type: capture
+
 # Plan Script Description:
 # Remove user accounts created during a previous deployment and before a new 
 # Capture. Tested on RHEL 7.5, CentOS 7.5, SLE 15 and XenServer 7.6.
