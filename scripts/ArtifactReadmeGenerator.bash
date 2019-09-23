@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Version 0.4
+# Version 0.5
 
 # This script generates the <ArtifactName>-README.md file 
 # associated with each artifact bundle found in the 
@@ -54,7 +54,7 @@ for artifact in $ARTIFACT_LIST ; do
 done
 echo
 
-if  [ -z $NEW_ARTIFACT_LIST ] ; then
+if  [ -z "${NEW_ARTIFACT_LIST}" ] ; then
 	echo -e "\nArtifact list is empty. Exiting..."
 	exit 1
 fi
@@ -66,7 +66,6 @@ for artifact in ${NEW_ARTIFACT_LIST} ; do
 
 
 	# Verify BuildPlans directory exists
-	# ToDo: Verify the following works when Build Plan list is empty
 	if [ ! -d BuildPlans ] ; then
 		echo -e "\tCannot find the ${artifact}/BuildPlans directory"
 		echo -e "\tMake sure sources of ${artifact} have been correctly extracted."
@@ -82,17 +81,16 @@ for artifact in ${NEW_ARTIFACT_LIST} ; do
 		>> ../${ARTIFACT_README}
 	for bp in ${BUILDPLAN_LIST} ; do
 		echo -e "\tProcessing $bp"
-		awk -F: '/Name/ {N=$NF}
-			/Type/ {T=$NF}
-			/Description/ {D=$NF}
+		awk -F: '/^Name/ {N=$NF}
+			/^Type/ {T=$NF}
+			/^Description/ {D=$NF}
 			/^ [1-9]/ { S=S $0 }
 			END {print N, "|", T, "|", D, "|", S}' $bp >> ../${ARTIFACT_README}
-		echo >> ../${ARTIFACT_README}
 	done
 	echo
 
 	cd ..
-	echo -e "## Plan scripts description\n\nName | Description\n-|-" \
+	echo -e "\n## Plan scripts description\n\nName | Description\n-|-" \
 		>> ${ARTIFACT_README}
 
 	# Verify that the PlanScripts and the BuildPlans directory exists
