@@ -6,6 +6,7 @@
 # bootloader in the EFI/BOOT directory of the UEFI partition. Tested with 
 # CentOS-1810, XenServer 7.6 and Ubuntu 19.04. Should work fine with SLE 15
 
+############
 # ##########################################
 # Prepare-for-DeploymentPS-FDZ
 # Version: 0.2

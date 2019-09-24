@@ -4,6 +4,7 @@
 # Cleans up temporary directories or files created in the during the Capture 
 # process.
 
+############
 #################################################
 # Clean-up-after-CapturePS-FDZ
 # Version: 0.45

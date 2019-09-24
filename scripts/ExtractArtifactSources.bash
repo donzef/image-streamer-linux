@@ -9,7 +9,7 @@
 # Typical invocation:
 #     ./artifact-sources.bash ../artifacts-bundles/Didactic-Linux-MultiDistro-Artifact-Bundle-V0.3-FDZ.zip
 
-# Version: 0.40
+# Version: 0.42
 
 # Check argument(s)
 NUM_ARG=1
@@ -87,11 +87,12 @@ rm -f MANIFEST.MF > /dev/null 2>&1
 for f in $PS_LIST ; do
     PS_NAME=$($JQ  -r '.name' $f)
     echo "Extracting Plan Script $PS_NAME from $f"
+    # Replace <spaces> char with "-" to avoid string manipulation problems
     PS_FILENAME=$($JQ  -r '.name' $f | tr ' ' "-")
     PS_ID=$($JQ  -r '.id' $f)
 
     # Insert PlanScript type and description at the beginning of PS sources
-    # with lines starting with "#"
+    # with lines starting with "# "
     PS_TYPE=$($JQ  -r '.planType' $f)
     PS_DESCRIPTION=$($JQ  -r '.description' $f)
     echo "# Plan Script Type: ${PS_TYPE}" > ${PlanScript_DIR}/${PS_FILENAME}
@@ -99,6 +100,7 @@ for f in $PS_LIST ; do
     echo "# Plan Script Description:" >> ${PlanScript_DIR}/${PS_FILENAME}
     echo -e $PS_DESCRIPTION | fold -s | sed '1,$s/^/# /' >> ${PlanScript_DIR}/${PS_FILENAME}
     echo >> ${PlanScript_DIR}/${PS_FILENAME}
+    echo "############" >> ${PlanScript_DIR}/${PS_FILENAME}
 
     PS_CONTENT=$($JQ  '.content' $f)
     # Need to remove manually surrounding quotes on line on first line and last line.

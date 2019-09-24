@@ -7,6 +7,7 @@
 # associated to the IP address of the first discovered NIC, which is shell 
 # variable iface=${array[0]}) NOTE: Not suitable for XenServer
 
+############
 # ############################################
 # Linux-configure-hostname-DeployPS-FDZ
 # Version: 0.53

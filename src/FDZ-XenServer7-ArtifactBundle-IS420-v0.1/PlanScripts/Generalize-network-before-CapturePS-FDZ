@@ -4,6 +4,7 @@
 # Remove network settings depending on the OS-Type before golden image capture. 
 # Tested with RHEL 7.5, CentOS 7.5, SLE 15 and XenServer 7.1
 
+############
 # ############################################
 # Generalize-network-before-CapturePS-FDZ
 # Version: 0.52

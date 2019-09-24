@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Version 0.6
+# Version 0.61
 
 # This script generates the <ArtifactName>-README.md file 
 # associated with each artifact bundle found in the 
@@ -107,7 +107,7 @@ for artifact in ${NEW_ARTIFACT_LIST} ; do
 	for ps in $PLANSCRIPT_LIST ; do
 		echo -e "\tProcessing $ps"
 		awk -F'#' '/Type/ {N=split($0, a, " ") ; Type=a[N]}
-			/############/ || /Copyright/ {exit}
+			/############/ {exit}
 			!/Description:/ && !/Plan Script Type:/ {Descr=Descr $NF}
 			END {print FILENAME, "|", Type, "|", Descr}' $ps >> ../$ARTIFACT_README
 	done

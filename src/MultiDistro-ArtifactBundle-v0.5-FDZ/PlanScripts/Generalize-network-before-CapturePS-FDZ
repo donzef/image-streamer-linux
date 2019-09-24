@@ -5,6 +5,7 @@
 # Tested with RHEL 7.5, CentOS 7.5, SLE 15, XenServer 7.1, 7.6. Although Ubuntu 
 # 19.04 does not generate fatal errors, it is not well integrated.
 
+############
 # ############################################
 # Generalize-network-before-CapturePS-FDZ
 # Version: 0.53

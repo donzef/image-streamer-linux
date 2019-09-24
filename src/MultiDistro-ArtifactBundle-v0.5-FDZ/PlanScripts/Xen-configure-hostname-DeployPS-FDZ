@@ -4,6 +4,7 @@
 # Hostname configuration of XenServer as well as new UUID and certificate 
 # generation. NOTE: Not suitable for Linux distros. It contains xe commands.
 
+############
 # ############################################
 # Xen-configure-hostname-DeployPS-FDZ
 # Version: 0.2
